@@ -7,7 +7,7 @@
 \title{My Cool Title}
 
 \author{Jacobus C. Lock\inst{1} \and
-  Gzegorz Cielniak\inst{1} \and
+  Grzegorz Cielniak\inst{1} \and
   Andrea Tramontano\inst{2} \and
   Nicola Bellotto\inst{1}
 }
@@ -25,13 +25,21 @@
 
 \section{Introduction}
 
-It is estimated that there are almost half a billion people today that live with mild to severe levels of vision impairments or total blindness and this number is expected to significantly rise with an ageing population~\cite{bourne2017magnitude}. There has been a rise interest from industrial partners in utilising modern technology to make their products more accessible and improvements in modern computing power and image processing capabilities have made this easier. The work we present here is part of the ActiVis project that aims to assist people with vision impairments (PwVI) to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera. This system implements ideas from the active vision field~\cite{bajcsy2017,bellotto2013}, but replaces the electro-mechanical servo typically found in active vision systems, with a user's arm and hand as pictured in Fig.~\ref{fig:system-in-use}. This project expands upon concepts originally proposed in~\cite{bellotto2013} and~\cite{lock2017portable} and builds off of the system introduced in~\cite{lock2019active}.
+It is estimated that there are almost half a billion people today that live with mild to severe levels of vision impairments or total blindness and this number is expected to significantly rise with an ageing population~\cite{bourne2017magnitude}.
+There has been a rise interest from industrial partners in utilising modern technology to make their products more accessible and improvements in modern computing power and image processing capabilities have made this easier.
+The work we present here is part of the ActiVis project that aims to assist people with vision impairments (PwVI) to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera.
+This system implements ideas from the active vision field~\cite{bajcsy2017,bellotto2013}, but replaces the electro-mechanical servo typically found in active vision systems, with a user's arm and hand as pictured in Fig.~\ref{fig:system-in-use}.
+This project expands upon concepts originally proposed in~\cite{bellotto2013} and~\cite{lock2017portable} and builds off of the system introduced in~\cite{lock2019active}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.38\textwidth]{figures/system_use.png}
+  \includegraphics[width=0.5\textwidth]{figures/system_use.png}
   \caption{The system in use during an experiment. }\label{fig:system-in-use}
 \end{figure}
+
+Our active search system uses the camera's current and previous views as input and leverages its understanding of inter-object spatial relationships to determine the best navigation action to determine the best action to take to reach the target object.
+To enable this, we implemented a partially observable Markov Decision Process (POMDP)~\cite{bellman1957markovian} on a mobile phone generates real-time navigation instructions to guide the user to their target object.
+
 
 \section{Previous Work}
 
