@@ -56,7 +56,30 @@ This work includes the following contributions:
 
 \section{Previous Work}
 
-\section{System Design}
+\section{Active Vision System}
+
+The work we present in this paper is an advancement towards the ActiVis projects larger goal of developing a stand-alone mobile system that can guide a PwVI towards their desired destination with minimal user input or intervention. 
+This work focuses on guiding a user towards an object in one, static environment and is limited to 2 dimensions (pan and tilt).
+
+A complete system diagram is given in Fig.~\ref{fig:sys-diagram}\todo{cite own work where fig is from if necessary}. 
+This diagram shows a typical feedback control loop that generates a control signal to minimise some error signal, but has been modified to incorporate a human within the loop.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.75\textwidth]{figures/control_loop.png}
+  \caption{System control loop: $r$ is the reference object, $e$ the error signal, $u$ and $u^*$ the original and interpreted control signals and $y$ is the current object observation. $K$, $H$ and $P$ are the control, human and sensor blocks respectively. }\label{fig:sys-diagram}
+\end{figure}
+
+In this case, the error is defined as the difference between the desired object and the object currently within view. 
+The implication of this modification is that an additional block, \emph{H}, is added to simulate a human that receives an control signal, \emph{u}, from the controller, \emph{K}. 
+However, the challenge with people is that a person may interpret \emph{u} in any unpredictable way (i.e.\ apply a transformation) that results in the signal \emph{u*} that points the camera, \emph{P}, to a new location containing a new object observation, \emph{y}.
+It is therefore important to design \emph{K} to take be robust enough to accommodate different user habits and limitations and ensure that \emph{u*} tracks \emph{u} as closely as possible. 
+These design considerations are addressed in previous work. \todo{how to state that we designed the interface already if its unpublished?}
+
+Another fact to take note of is the measurement noise, \emph{n}, added in the feedback loop that simulates an object detector making classification errors that will influence the action that \emph{K} generates. 
+In our previous work, we assumed a `perfect classifier' and solved the problem using a plain Markov decision process (MDP). 
+In this work we do away with that somewhat naive assumption and implement a POMDP that can better handle the observation uncertainties inherent to modern object detectors and classifiers. 
+The design of the human controller is discussed next. 
 
 \section{Experiment Design}
 
