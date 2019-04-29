@@ -2,6 +2,11 @@
 
 \usepackage{graphicx}
 
+% Package for todo command
+\usepackage{xcolor}
+
+\newcommand\todo[1]{\textcolor{red}{#1}}
+
 \begin{document}
 
 \title{My Cool Title}
@@ -38,8 +43,16 @@ This project expands upon concepts originally proposed in~\cite{bellotto2013} an
 \end{figure}
 
 Our active search system uses the camera's current and previous views as input and leverages its understanding of inter-object spatial relationships to determine the best navigation action to determine the best action to take to reach the target object.
-To enable this, we implemented a partially observable Markov Decision Process (POMDP)~\cite{bellman1957markovian} on a mobile phone generates real-time navigation instructions to guide the user to their target object.
+To enable this, we expanded upon our previous work and implemented a partially observable Markov Decision Process (POMDP)~\cite{bellman1957markovian} on a mobile phone generates real-time navigation instructions to guide the user to their target object.
 
+This work includes the following contributions:
+
+\begin{itemize}
+  \item a POMDP-based human controller that enables object search and guidance on a mobile phone;
+  \item experiments that evaluate the efficacy of the proposed system.
+\end{itemize}
+
+\todo{Add paper layout}
 
 \section{Previous Work}
 
