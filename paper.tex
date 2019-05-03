@@ -107,7 +107,7 @@ A POMDP model is represented by the 7-tuple
   (\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \gamma),
 \end{equation}
 
-\noindent where $\mathbf{S}$ represents the agent's state space, $\mathbf{A}$ is a set of actions the agent can execute in any state, $\mathbf{T}$ is a table containing the probabilities of transitioning from state $s$ to state $s'$, $s, s' \in \mathbf{S}$ after executing action $a$, $a \in \mathbf{A}$ and $\mathbf{R}$ is the reward the agent receives for reaching state $s'$ after executing action $a$. $\mathbf{\Omega}$ is a set of possible state observations the agent can make, while the table $\mathbf{O}$ contains the probabilities of making state observation $\omego$, $\omega \in \mathbf{\Omega}$, when in state $s$ after executing action $a$. Finally, the scalar $\gamma$ is a discount factor that prioritises long-term over short-term rewards and affects the model's convergence rate. 
+\noindent where $\mathbf{S}$ represents the agent's state space, $\mathbf{A}$ is a set of actions the agent can execute in any state, $\mathbf{T}$ is a table containing the probabilities of transitioning from state $s$ to state $s'$, $s, s' \in \mathbf{S}$ after executing action $a$, $a \in \mathbf{A}$ and $\mathbf{R}$ is the reward the agent receives for reaching state $s'$ after executing action $a$. $\mathbf{\Omega}$ is a set of possible state observations the agent can make, while the table $\mathbf{O}$ contains the probabilities of making state observation $\omega$, $\omega \in \mathbf{\Omega}$, when in state $s$ after executing action $a$. Finally, the scalar $\gamma$ is a discount factor that prioritises long-term over short-term rewards and affects the model's convergence rate. 
 
 The state and space spaces and the reward and transition functions for this POMDP are the same as the MDP described in~\cite{lock2019active}. 
 The major difference is the addition of an observation matrix that defines the probability of being in any given state after making a new observation.
@@ -134,7 +134,7 @@ The possible actions an that define the area where the agent will generate the n
 
 \subsubsection{Transitions}
 
-$\mathbf{T}$ was determined by extracting the inter-object spatial relationships for the objects of interest in terms of the actions in $\matbf{A}$ from the OpenImages\todo{cite} dataset. 
+$\mathbf{T}$ was determined by extracting the inter-object spatial relationships for the objects of interest in terms of the actions in $\mathbf{A}$ from the OpenImages\todo{cite} dataset. 
 For example, by iterating over all of the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 87\% \todo{get real percentage} of images containing both objects. 
 The transition function for this case will look like 
 
