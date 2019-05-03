@@ -2,6 +2,7 @@
 
 \usepackage{graphicx}
 \usepackage{booktabs}
+\usepackage{amsmath}
 
 % Package for todo command
 \usepackage{xcolor}
@@ -95,19 +96,27 @@ The design and implementation of this POMDP human controller is discussed here.
 A POMDP is an extension to the MDP model that allows it to handle cases where the state is not directly observable, allowing it to be used in more realistic scenarios. 
 In this case, the state is inferred based on the model parameters and the associated sensor accuracy (if a sensor is 100\% accurate, the state would be directly observable).
 The implication of this is that a POMDP-based agent does not know its state at any point in time.
-Instead, a POMDP model can be transformed into a so-called belief MDP\todo{maybe cite} that uses a probabilistic meta belief state that changes with additional observations to reflect the likelihood the agent is in any given state.
+Instead, a POMDP model relies on a so-called belief meta-state that changes with additional observations to reflect the likelihood the agent is in any given state.
 The belief state is fully observable by the agent and can be used to infer the parent POMDP-agent's current state and generate the next action, hence the designation as an MDP.\@
 
 The system uses an object detector and classifier in order to find any objects within the camera's view.
 These detectors and classifiers have some noise associated with them that is caused by misclassifications and similar errors and a POMDP is therefore necessary in this case.
 
-A POMDP model is represented by the 7-tuple
+A POMDP model is represented by the $n$-tuple
 
 \begin{equation}
-  (\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \gamma),
+  (\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \mathbf{b}, \gamma),
 \end{equation}
 
-\noindent where $\mathbf{S}$ represents the agent's state space, $\mathbf{A}$ is a set of actions the agent can execute in any state, $\mathbf{T}$ is a table containing the probabilities of transitioning from state $s$ to state $s'$, $s, s' \in \mathbf{S}$ after executing action $a$, $a \in \mathbf{A}$ and $\mathbf{R}$ is the reward the agent receives for reaching state $s'$ after executing action $a$. $\mathbf{\Omega}$ is a set of possible state observations the agent can make, while the table $\mathbf{O}$ contains the probabilities of making state observation $\omega$, $\omega \in \mathbf{\Omega}$, when in state $s$ after executing action $a$. Finally, the scalar $\gamma$ is a discount factor that prioritises long-term over short-term rewards and affects the model's convergence rate. 
+\noindent where $\mathbf{S}$ represents a finite set of discrete states, $\mathbf{A}$ is a set of discrete actions the agent can execute in any state, $\mathbf{T}$ is a matrix containing the probabilities of transitioning from state $s$ to state $s'$, $s, s' \in \mathbf{S}$ after executing action $a$, $a \in \mathbf{A}$ and $\mathbf{R}$ is the reward the agent receives for reaching state $s'$ after executing action $a$.
+$\mathbf{\Omega}$ is a set of possible state observations the agent can make, while the table $\mathbf{O}$ contains the probabilities of making state observation $\omega$, $\omega \in \mathbf{\Omega}$, when in state $s$ after executing action $a$.
+Finally, $\mathbf{b}$ is the belief vector containing the state probability distribution and the scalar $\gamma$ is a discount factor that prioritises long-term over short-term rewards and affects the model's convergence rate. 
+The belief state $\mathbf{b}$ is updated for every timestep and action-observation pair.
+This update is done with
+
+\begin{equation}
+  b_t(s') = \eta\Omega(o, s', a)\sum_{s\in\mathbf{S}}\mathbf{T}(s, a, s')b_{t-1}(s)
+\end{equation}
 
 The state and space spaces and the reward and transition functions for this POMDP are the same as the MDP described in~\cite{lock2019active}. 
 The major difference is the addition of an observation matrix that defines the probability of being in any given state after making a new observation.
@@ -122,7 +131,7 @@ The state is given by
   s = \langle z, n, v \rangle,
 \end{equation}
 
-\noindent where $z$ is the object within view, n the number of search steps taken since the search began and a binary variable $v$ that tracks the uniqueness of a waypoint's position for the search.
+\noindent where $z, z\in\mathbf{z}$, is the object within view, n the number of search steps taken since the search began and a binary variable $v$ that tracks the uniqueness of a waypoint's position for the search.
 
 \subsubsection{Actions}
 
@@ -152,15 +161,16 @@ An example of this relationship can be seen in the image in Fig.~\ref{fig:openim
 \subsubsection{Reward Function}
 
 The reward function is designed to encourage the agent to find the target object by giving it a substantial reward for doing so, while penalising it for every action it takes that does not results in it finding the target object.
-All of the rewards and when they are given are listed in Table~\ref{tab:rewards}.
+Furthermore, additional penalties are given if the agent generates a waypoint in an area it has explored before $(v = \textrm{true}$) and when it exceeds some search length threshold, denoted by $n_{\max}$.
+All of the rewards and when they are given are summarised by Table~\ref{tab:rewards}.
 
 \begin{table}
   \centering
-  \caption{The reward function for the POMDP.\ }\label{tab:rewards}
+  \caption{The reward function for the POMDP. }\label{tab:rewards}
   \begin{tabular}{cc}
     \toprule
     $r(o = o_{target})$ & 10000 \\ \midrule
-    $r(v = true)$  & -75 \\ \midrule
+    $r(v = \texrm{true})$  & -75 \\ \midrule
     $r(n > n_{\max})$ & -75 \\ \midrule
     otherwise $r(\cdot)$ & -100  \\ \midrule
     \bottomrule
@@ -176,9 +186,27 @@ These values were found by performing a set of classifier tests on the object de
 
 \subsection{Implementation}
 
-\subsubsection{Belief MDP Transformation}
-
 \subsubsection{Training}
+
+For our system, we encoded a total of 16 objects, including a `nothing' state where the detector does not see anything of interest, into the POMDP and object detector. These objects are given by $\mathbf{z}$, defined as 
+
+\begin{equation}
+  \begin{split}
+    \mathbf{z} = \{ nothing, monitor, keyboard, mouse, desk, laptop, mug, window,\\ 
+      lamp, backpack, chair, couch, plant, telephone, whiteboard, door \}
+  \end{split}
+\end{equation}
+
+We also set $n_{\max}$ to 12 waypoints, after which the agent gets penalised for every additional waypoint it generates that does not lead to the target object. 
+This results in a total of 352 reachable states ($n_{states} = 16\times11\times2$), with any state containing the target object acting as a terminal state.
+
+The POMDP model is put through a training process to generate a policy that contains the optimal belief-action mapping that an agent can use to produce the optimal waypoint locations.
+This is done by having the agent explore the entire state-action-observation space and optimising the policy to maximise the long-term cumulative reward.
+
+The difficulty of solving POMDPs is that the belief vector is a vector of continuous probability distributions with infinite combinations, making them very time-consuming or even impossible to solve exactly and we found this to be the case for our moderately-sized state space size and therefore opted to use an approximate method instead.
+Multiple algorithms that solve POMDPs approximately have been proposed\todo{cite examples} and in this work we used the Point-Based Value Iteration (PBVI) algorithm\todo{cite} to solve the POMDP model 
+The PBVI algorithm speeds up the optimisation process by selecting a smaller subset of representative belief points from the belief function and tracking the values and derivatives of those points only. 
+Using the PBVI algorithm, we generated a total of 15 policies, one for each target object. 
 
 \subsubsection{Android App}
 
