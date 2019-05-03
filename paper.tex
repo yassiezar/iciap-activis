@@ -84,7 +84,103 @@ The design of the human controller is discussed next.
 
 \section{Human Controller}
 
+The POMDP human control module that we implemented for this work is an extension to the MDP-based controller we made for the experiments described in~\cite{lock2019active}.
+It works by generating a trail of virtual waypoints for the user to point the camera towards.
+The waypoint positions are based on the model's pre-trained, internal knowledge on the inter-object spatial relationships and they are placed in a way that maximises the probability of the user pointing to and finding the target object
+A new waypoint is generated when the user finds the current waypoint or finds another ancillary object.
+The design and implementation of this POMDP human controller is discussed here.
 
+\subsection{Design}
+
+A POMDP is an extension to the MDP model that allows it to handle cases where the state is not directly observable, allowing it to be used in more realistic scenarios. 
+In this case, the state is inferred based on the model parameters and the associated sensor accuracy (if a sensor is 100\% accurate, the state would be directly observable).
+The implication of this is that a POMDP-based agent does not know its state at any point in time.
+Instead, a POMDP model can be transformed into a so-called belief MDP\todo{maybe cite} that uses a probabilistic meta belief state that changes with additional observations to reflect the likelihood the agent is in any given state.
+The belief state is fully observable by the agent and can be used to infer the parent POMDP-agent's current state and generate the next action, hence the designation as an MDP.\@
+
+The system uses an object detector and classifier in order to find any objects within the camera's view.
+These detectors and classifiers have some noise associated with them that is caused by misclassifications and similar errors and a POMDP is therefore necessary in this case.
+
+A POMDP model is represented by the 7-tuple
+
+\begin{equation}
+  (\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \gamma),
+\end{equation}
+
+\noindent where $\mathbf{S}$ represents the agent's state space, $\mathbf{A}$ is a set of actions the agent can execute in any state, $\mathbf{T}$ is a table containing the probabilities of transitioning from state $s$ to state $s'$, $s, s' \in \mathbf{S}$ after executing action $a$, $a \in \mathbf{A}$ and $\mathbf{R}$ is the reward the agent receives for reaching state $s'$ after executing action $a$. $\mathbf{\Omega}$ is a set of possible state observations the agent can make, while the table $\mathbf{O}$ contains the probabilities of making state observation $\omego$, $\omega \in \mathbf{\Omega}$, when in state $s$ after executing action $a$. Finally, the scalar $\gamma$ is a discount factor that prioritises long-term over short-term rewards and affects the model's convergence rate. 
+
+The state and space spaces and the reward and transition functions for this POMDP are the same as the MDP described in~\cite{lock2019active}. 
+The major difference is the addition of an observation matrix that defines the probability of being in any given state after making a new observation.
+In essence, it is a measure of the sensor accuracy, and in this case it describes the object detector's classification accuracy and recall.
+These parameters are given by the following. 
+
+\subsubsection{State Space}
+
+The state is given by
+
+\begin{equation}
+  s = \langle z, n, v \rangle,
+\end{equation}
+
+\noindent where $z$ is the object within view, n the number of search steps taken since the search began and a binary variable $v$ that tracks the uniqueness of a waypoint's position for the search.
+
+\subsubsection{Actions}
+
+The possible actions an that define the area where the agent will generate the next waypoint are given by
+
+\begin{equation}
+  \mathbf{A} = \{ \textrm{UP, DOWN, LEFT, RIGHT} \}
+\end{equation}
+
+\subsubsection{Transitions}
+
+$\mathbf{T}$ was determined by extracting the inter-object spatial relationships for the objects of interest in terms of the actions in $\matbf{A}$ from the OpenImages\todo{cite} dataset. 
+For example, by iterating over all of the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 87\% \todo{get real percentage} of images containing both objects. 
+The transition function for this case will look like 
+
+\begin{equation}
+  \mathbf{T}(s, a, s') = \mathbf{T}(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.87
+\end{equation}
+An example of this relationship can be seen in the image in Fig.~\ref{fig:openimage}.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.5\columnwidth]{figures/desk_example.png}
+  \caption{}\label{fig:openimage}
+\end{figure}
+
+\subsubsection{Reward Function}
+
+The reward function is designed to encourage the agent to find the target object by giving it a substantial reward for doing so, while penalising it for every action it takes that does not results in it finding the target object.
+All of the rewards and when they are given are listed in Table~\ref{tab:rewards}.
+
+\begin{table}
+  \centering
+  \caption{The reward function for the POMDP.\ }\label{tab:rewards}
+  \begin{tabular}{cc}
+    \toprule
+    $r(o = o_{target})$ & 10000 \\ \midrule
+    $r(v = true)$  & -75 \\ \midrule
+    $r(n > n_{\max})$ & -75 \\ \midrule
+    otherwise $r(\cdot)$ & -100  \\ \midrule
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsubsection{Observations and Observation Matrix}
+
+The observations the agent can make are identical to the states that the agent can enter. 
+In this case, however, the only uncertainty in the system is introduced by the object detector, since the model can perfectly track the number of steps taken during the search and the locations that waypoints have been generated.
+$\mathbf{\Omega}$ therefore only contains the classification/misclassification probabilities of the object detector. 
+These values were found by performing a set of classifier tests on the object detector and generating a confusion matrix to populate $\mathbf{\Omega}$.
+
+\subsection{Implementation}
+
+\subsubsection{Belief MDP Transformation}
+
+\subsubsection{Training}
+
+\subsubsection{Android App}
 
 \section{Experiment Design}
 
