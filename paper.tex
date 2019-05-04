@@ -184,8 +184,6 @@ In this case, however, the only uncertainty in the system is introduced by the o
 $\mathbf{\Omega}$ therefore only contains the classification/misclassification probabilities of the object detector. 
 These values were found by performing a set of classifier tests on the object detector and generating a confusion matrix to populate $\mathbf{\Omega}$.
 
-\subsection{Implementation}
-
 \subsubsection{Training}
 
 For our system, we encoded a total of 16 objects, including a `nothing' state where the detector does not see anything of interest, into the POMDP and object detector. These objects are given by $\mathbf{z}$, defined as 
@@ -208,9 +206,25 @@ Multiple algorithms that solve POMDPs approximately have been proposed\todo{cite
 The PBVI algorithm speeds up the optimisation process by selecting a smaller subset of representative belief points from the belief function and tracking the values and derivatives of those points only. 
 Using the PBVI algorithm, we generated a total of 15 policies, one for each target object. 
 
-\subsubsection{Android App}
+\subsection{Controller Implementation}
 
 We made an Android app that implements the object detector and POMDP controller onto a mobile phone that can generate and provide guidance instructions for a user.  
+This was done by combining an audio interface that can provide non-visual guidance instructions, the POMDP controller and object detector onto a mobile app.
+Each of these aspects and their implementation are discussed here.
+
+\subsubsection{Audio Interface}
+
+The target audience of our system are PwVI and we therefore have to provide guidance instructions in a non-visual manner that is intuitive and easy to understand. 
+To avoid blocking a user's access to the ambient sounds (something PwVI typically rely upon extensively), we use a set of non-intrusive bone-conducting headsets to transmit the audio signals to the user. 
+
+To describe the waypoints pan and tilt positions, we implemented an improved version of the interface described in~\cite{belloto2013} that exploits a uses a spatialised audio signal.
+However, in this work we only spatialise the audio in the pan dimension only, since our headphones bypass the ear's pinnae that allow a person to determine the tilt angle of a sound source. 
+Instead we exploit a human's natural association of high and low sound sources with a high and low sound frequency respectively\todo{cite} and adjust the sound source's pitch as a function of the waypoint's tilt angle. 
+With this interface and set of headphones, we are able to describe the location of a waypoint to a user in 2 dimensions (pan and tilt) in an intuitive an non-intrusive manner. 
+
+\subsubsection{Object Detector}
+
+\subsubsection{POMDP Controller}
 
 \section{Experiment Design}
 
