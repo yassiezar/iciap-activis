@@ -281,6 +281,36 @@ All of the objects and their experiment placement is given in Table~\ref{tab:obj
 
 \section{Results}
 
+%\subsection{Target Acquisition}
+
+\subsection{Time to Target}
+
+The time it took a participant to find a target object is an important indicator of performance for the system, where less time indicates a shorter search time and increased performance.
+The data for the search times for each dataset are given in Fig~\ref{fig:boxplot-time}, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/boxplot_time_to_target.png}
+  \caption{A set of boxplots comparing the time to target. }\label{fig:boxplot-time}
+\end{figure}
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/cumplot_time_to_target.png}
+  \caption{A set of CDFs comparing the time to target. }\label{fig:cum-time}
+\end{figure}
+
+By inspecting the boxplots in Fig.~\ref{fig:boxplot-time}, it can be seen that the guidance system reduced the time it took the participants to find the targets on average from 17.8s to 10s per target, ($p = 0.038$).
+This is an average improvement of almost 40\%.
+This is supported by the CDFs in Fig.~\ref{fig:cum-time} that show that \todo{Discuss the less number of objects found and how it is not statistically signioficatn. Perhaps show it in CDF}
+
+\subsection{Movement}
+
+To give an indication of the effort required to find each target, we look at the mobile device's displacement data. 
+In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user, enhancing the user experience\todo{maybe cite paper that says less exertion is good}.
+
+The device displacement was both linear and angular in the $x, y, z, \phi$ (pan) and $\theta$ dimensions.
+By integrating these data with respect to time, we can get the total displacement for each dimension.
+
 \section{Conclusion}
 
 \bibliographystyle{splncs04}
