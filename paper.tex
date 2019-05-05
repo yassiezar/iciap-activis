@@ -28,7 +28,7 @@
 
 \begin{abstract}
   Cool abstract here
-  \keywords{All the best keywords}
+  \keywords{Active vision, vision impairment, object detection}
 \end{abstract}
 
 \section{Introduction}
@@ -135,8 +135,9 @@ The belief state $\mathbf{b}$ is updated for every timestep and action-observati
 This update is done with
 
 \begin{equation}
-  b_t(s') = \eta\Omega(o, s', a)\sum_{s\in\mathbf{S}}\mathbf{T}(s, a, s')b_{t-1}(s)
+  b_t(s') = \eta\Omega(o, s', a)\sum_{s\in\mathbf{S}}\mathbf{T}(s, a, s')b_{t-1}(s), 
 \end{equation}
+where $\eta$ is a normalisation factor. 
 
 The state and space spaces and the reward and transition functions for this POMDP are the same as the MDP described in~\cite{lock2019active}. 
 The major difference is the addition of an observation matrix that defines the probability of being in any given state after making a new observation.
@@ -163,19 +164,19 @@ The possible actions an that define the area where the agent will generate the n
 
 \subsubsection{Transitions}
 
-$\mathbf{T}$ was determined by extracting the inter-object spatial relationships for the objects of interest in terms of the actions in $\mathbf{A}$ from the OpenImages\todo{cite} dataset. 
-For example, by iterating over all of the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 87\% \todo{get real percentage} of images containing both objects. 
+$\mathbf{T}$ was determined by extracting the inter-object spatial relationships for the objects of interest in terms of the actions in $\mathbf{A}$ from the OpenImages~\cite{openimages} dataset. 
+For example, by iterating over all of the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 16\% of images containing both objects. 
 The transition function for this case will look like 
 
 \begin{equation}
-  \mathbf{T}(s, a, s') = \mathbf{T}(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.87
+  \mathbf{T}(s, a, s') = \mathbf{T}(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16.
 \end{equation}
 An example of this relationship can be seen in the image in Fig.~\ref{fig:openimage}.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.5\columnwidth]{figures/desk_example.png}
-  \caption{}\label{fig:openimage}
+  \caption{An example from of an image from the OpenImage dataset~\cite{openimages} containing typical office objects}\label{fig:openimage}
 \end{figure}
 
 \subsubsection{Reward Function}
