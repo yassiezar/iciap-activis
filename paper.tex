@@ -61,6 +61,23 @@ The experiments that were conducted in this work, and their results, are discuss
 
 \section{Previous Work}\label{sec:previous-work}
 
+Making a mobile device that can detect objects and guide a PwVI in real-time and using on-board processing power has become much more feasible in recent years, thanks to improvements to mobile computing power and image processing methods.
+Early attempts to solve this guidance problem made use of special markers or barcodes, encoded with object or environmental information, and a smartphone that can efficiently scan the environment for these simple patterns~\cite{gude2013blind,iannizzotto2005badge3d,manduchi2012mobile}. 
+The device then uses some feedback mode (e.g.\ voice, Braille) to read out the embedded information or guide the user towards the markers. 
+Improvements to feature detectors and deep networks have made it more viable~\cite{redmon2016you,huang2017speed} to replace the markers with real objects, while providing the same guidance functionality.
+The SIFT and SURF-based systems in~\cite{schauerte2012assistive} is an example of a markerless system.
+An alternative detection approach proposed in~\cite{bigham2010vizwiz}, and commercialised in the `Be My Eyes' app~\cite{bemyeyes2019}, requires the user to send a photo of their environment and target object to a Mechanical Turk worker or volunteer that then sends the position of the requested object within the picture back to the user. 
+
+The issue with the marker-based approach is that it requires a significant amount of effort to place and maintain markers around an environment.
+This problem is remedied in the markerless systems.
+However, both of these approaches are passive in their guidance approach and rely on the user placing the desired marker/object within the camera's view by themselves first before any guidance can be provided. 
+The human-based systems from~\cite{bigham2010vizwiz,bemyeyes2019} can leverage a human's understanding of the environment to help guide a person to the correct area, but the drawback here is that there is a significant lag time and a significant reliance on a good internet connection and remote worker being available. 
+Our previous work on the ActiVis system~\cite{lock2019active} addressed the passive guidance issue by implementing a controller that provides the user with instructions on where to point the device to find an out of view object and we proved that this is a viable method to search for an object. 
+However, this work relied upon physical barcodes, encoded with object information, to simulate real objects.
+In this work, we are replacing the barcodes with real objects, thereby closing the object detection and guidance loop. 
+
+\todo{Object detectors}
+
 \section{Active Vision System}\label{sec:active-vision}
 
 The work we present in this paper is an advancement towards the ActiVis projects larger goal of developing a stand-alone mobile system that can guide a PwVI towards their desired destination with minimal user input or intervention. 
