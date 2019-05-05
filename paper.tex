@@ -77,7 +77,16 @@ Our previous work on the ActiVis system~\cite{lock2019active} addressed the pass
 However, this work relied upon physical barcodes, encoded with object information, to simulate real objects.
 In this work, we are replacing the barcodes with real objects, thereby closing the object detection and guidance loop. 
 
-\todo{Object detectors}
+Object detectors can be divided into two main categories that use single-stage and 2-stage methods.  
+The two-stage methods use a region proposal approach [ref] where an external algorithm proposes a region of interest that the classifier uses as input to recognise any objects. 
+They typically reach higher accuracy, but at the cost of more memory and computational resources.\todo{cite}
+The Faster-RCNN [ref] is an example of a 2-stage network that uses RPN\todo{what is rpn} for region proposals. 
+On the other hand, single-stage methods apply multiple differently sized windows over the image and checks if any objects appear in those windows. 
+These methods, such as Single-Shot Detection (SSD) and You Only Look Once (YOLO), typically need less computational resources, but at the cost of lower accuracy.\todo{cite} 
+Marrying a single-stage method to a feature extractor yields higher accuracy, by at the cost of increased computational resources. 
+There is therefore a fine speed-accuracy trade-off to be made, particularly in a mobile context where processing resources are limited. 
+Mobilenet [ref] is a classifier network that can be used as a feature extractor  that introduced depth-wise separable convolutions that decrease the number of operations needed to make a convolution.
+This leads to model that uses much less memory, but with a small drop in accuracy\todo{cite}.
 
 \section{Active Vision System}\label{sec:active-vision}
 
@@ -246,6 +255,9 @@ A similar interface was used in~\cite{schauerte2012assistive}.
 With this interface and set of headphones, we are able to describe the location of a waypoint to a user in 2 dimensions (pan and tilt) in an intuitive an non-intrusive manner. 
 
 \subsubsection{Object Detector}
+
+The SSD-Lite network is a single-stage object detection network that is based on the SSD architecture, but uses MobileNetV2\todo{cite} for its backbone.
+This leads to a more `lightweight' model that has less parameters and requires less memory to perform inference tasks, which makes it suitable for a mobile platform. 
 
 \subsubsection{POMDP Controller}
 
