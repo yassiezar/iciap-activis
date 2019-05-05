@@ -78,15 +78,14 @@ However, this work relied upon physical barcodes, encoded with object informatio
 In this work, we are replacing the barcodes with real objects, thereby closing the object detection and guidance loop. 
 
 Object detectors can be divided into two main categories that use single-stage and 2-stage methods.  
-The two-stage methods use a region proposal approach [ref] where an external algorithm proposes a region of interest that the classifier uses as input to recognise any objects. 
-They typically reach higher accuracy, but at the cost of more memory and computational resources.\todo{cite}
-The Faster-RCNN [ref] is an example of a 2-stage network that uses RPN\todo{what is rpn} for region proposals. 
+The two-stage models, such as Faster R-CNN~\cite{ren2015faster}, use a region proposal network approach where an external algorithm proposes a region of interest that the classifier uses as input to recognise any objects. 
+They typically reach higher accuracy, but at the cost of increased memory and computational resource requirements.\todo{cite}
 On the other hand, single-stage methods apply multiple differently sized windows over the image and checks if any objects appear in those windows. 
-These methods, such as Single-Shot Detection (SSD) and You Only Look Once (YOLO), typically need less computational resources, but at the cost of lower accuracy.\todo{cite} 
+These methods, such as Single-Shot Detection (SSD)~\cite{liu2016ssd} and You Only Look Once (YOLO)~\cite{redmon2018yolo}, typically need less computational resources, but at the cost of decreased accuracy.
 Marrying a single-stage method to a feature extractor yields higher accuracy, by at the cost of increased computational resources. 
 There is therefore a fine speed-accuracy trade-off to be made, particularly in a mobile context where processing resources are limited. 
-Mobilenet [ref] is a classifier network that can be used as a feature extractor  that introduced depth-wise separable convolutions that decrease the number of operations needed to make a convolution.
-This leads to model that uses much less memory, but with a small drop in accuracy\todo{cite}.
+MobileNet~\cite{howard2017mobilenet} is a classifier network that can be used as a feature extractor  that introduced depth-wise separable convolutions that decrease the number of operations needed to make a convolution.
+This leads to model that uses much less memory, but again with a small drop in accuracy.
 
 \section{Active Vision System}\label{sec:active-vision}
 
@@ -258,6 +257,11 @@ With this interface and set of headphones, we are able to describe the location 
 
 The SSD-Lite network is a single-stage object detection network that is based on the SSD architecture, but uses MobileNetV2\todo{cite} for its backbone.
 This leads to a more `lightweight' model that has less parameters and requires less memory to perform inference tasks, which makes it suitable for a mobile platform. 
+This model achieves a mAPs of 0.22 with 4.3M parameters and 0.8B FLOPS~\cite{li2018tinydsod} on the COCO dataset~\cite{lin2014microsoft}. 
+When compared with the full SSD model, it achieves a slightly lower mAPs (0.25), but with significantly less parameters (34.3M) and FLOPS (34.36B).
+\todo{compare with alterniative}
+
+
 
 \subsubsection{POMDP Controller}
 
