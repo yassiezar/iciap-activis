@@ -222,7 +222,7 @@ The POMDP model is put through a training process to generate a policy that cont
 This is done by having the agent explore the entire state-action-observation space and optimising the policy to maximise the long-term cumulative reward.
 
 The difficulty of solving POMDPs is that the belief vector is a vector of continuous probability distributions with infinite combinations, making them very time-consuming or even impossible to solve exactly and we found this to be the case for our moderately-sized state space size and therefore opted to use an approximate method instead.
-Multiple algorithms that solve POMDPs approximately have been proposed\todo{cite examples} and in this work we used the Point-Based Value Iteration (PBVI) algorithm~\cite{pineau2003point} to solve the POMDP model.
+Multiple algorithms that solve POMDPs approximately have been proposed~\cite{bargiacchi2016dynamic,kaelbling1998planning,silver2010monte,spaan2005perseus} and in this work we used the Point-Based Value Iteration (PBVI) algorithm~\cite{pineau2003point} as implemented in the AI-Toolbox library~\cite{aitoolbox} to solve the POMDP model.
 The PBVI algorithm speeds up the optimisation process by selecting a smaller subset of representative belief points from the belief function and tracking the values and derivatives of those points only. 
 Using the PBVI algorithm, we generated a total of 15 policies, one for each target object. 
 
