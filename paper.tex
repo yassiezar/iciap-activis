@@ -307,28 +307,23 @@ The environment, and the object placement within it, for both experiments was mo
 Measures were taken to ensure that both office environments were unique in layout and object placement. 
 However, for the larger, more static objects (e.g.\ a desk or door) there is cross-experiment occurrences, since most offices contain the same basic furniture and objects. 
 These objects were placed in different locations relative to each other for the 2 experiments to minimise any learning effects that may occur between the experiments. 
-All of the objects and their experiment placement is given in Table~\ref{tab:objects}.
+The objects in the guided experiment environment is
 
-\begin{table}
+\begin{equation}
+  z_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
+\end{equation}
+while the objects in the unguided experiment are
+
+\begin{equation}
+  z_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
+\end{equation}
+A picture of the unguided experiment environment is given in Fig.~\ref{fig:experiment-env}. 
+
+\begin{figure}
   \centering
-  \caption{The different objects used within each experiment environment.}\label{tab:objects}
-  \begin{tabular}{p{2cm}cp{0.7cm}c}
-    \toprule
-    & \bf{Guided} & & \bf{Unguided} \\\midrule
-    Door        & X & & X \\\midrule
-    Desk	& X & & X \\\midrule
-    Chair	& X & & X \\\midrule
-    Whiteboard	& X & & X \\\midrule
-    Mouse	& X & & X \\\midrule
-    Monitor	&   & & X \\\midrule
-    Telephone	&   & & X \\\midrule
-    Keyboard	&   & & X \\\midrule
-    Laptop	& X & &   \\\midrule
-    Backpack	& X & &   \\\midrule
-    Mug		& X & &   \\\midrule
-    \bottomrule
-  \end{tabular}
-\end{table}
+  \includegraphics[width=0.7\textwidth]{figures/boxplot_time_to_target.png}
+  \caption{A set of boxplots comparing the time to target. }\label{fig:boxplot-time}
+\end{figure}
 
 \section{Results}\label{sec:results}
 
@@ -358,7 +353,7 @@ This is supported by the CDFs in Fig.~\ref{fig:cum-time} that show that \todo{Di
 To give an indication of the effort required to find each target, we look at the mobile device's displacement data. 
 In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user, enhancing the user experience\todo{maybe cite paper that says less exertion is good}.
 
-The device displacement was both linear and angular in the $x, y, z, \phi$ (pan) and $\theta$ dimensions.
+The device displacement was both linear and angular in the $x, y, z, \phi$ (pan) and $\theta$ (tilt) dimensions.
 By integrating these data with respect to time, we can get the total displacement for each dimension.
 
 \section{Conclusion}\label{sec:conclusion}
