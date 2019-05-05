@@ -256,10 +256,16 @@ Take for example a person in bathroom facing the basin after washing their hands
 It is unlikely that a hand dryer would be placed above or below a wash basin so it it is reasonable to believe that they would instinctively look at chest height on the walls to their left, right or behind them to find a dryer. 
 
 For this experiment, a mobile camera and object detector acts as the participant's eyes and informs them what the objects within the camera's view and it is then up to the participant to exploit their prior knowledge of the given environment in order to manipulate the camera to point towards the target object. 
-This process is modelled by the schematic in Fig. MEME\todo{put in figure without controller} where the human, \emph{H}, acts as both the actuator and controller.
+This process is modelled by the schematic in Fig.~\ref{fig:sys-diagram-no-controller}, \emph{H}, acts as both the actuator and controller.
 The object detector was implemented in an Android app that uses the object classifier and Android's Text-to-Speech engine to read out any objects that it detected. 
 The app only reads out the objects when the participant requested it to by tapping on the screen. 
 When the target object comes within the camera's view and is correctly classified by the object detector, the device vibrated to inform the participant. 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/control_loop_no_controller.png}
+  \caption{A set of CDFs comparing the time to target. }\label{fig:sys-diagram-no-controller}
+\end{figure}
 
 Each participant was verbally told what the target object was they they were meant to find and each participant was given 45 seconds to find the target object. 
 In this case, the learning effect was ignored in order to mimic the typical search behaviour described earlier. 
@@ -319,6 +325,7 @@ The data for the search times for each dataset are given in Fig~\ref{fig:boxplot
   \includegraphics[width=0.7\textwidth]{figures/boxplot_time_to_target.png}
   \caption{A set of boxplots comparing the time to target. }\label{fig:boxplot-time}
 \end{figure}
+
 \begin{figure}
   \centering
   \includegraphics[width=0.7\textwidth]{figures/cumplot_time_to_target.png}
