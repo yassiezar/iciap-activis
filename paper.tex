@@ -56,11 +56,12 @@ This work includes the following contributions:
   \item experiments that evaluate the efficacy of the proposed system.
 \end{itemize}
 
-\todo{Add paper layout}
+Section~\ref{sec:previous-work} discusses relevant work that has already been done, followed by a description of the active vision system and human controller in Sections~\ref{sec:active-vision} and~\ref{sec:human-controller} respectively. 
+The experiments that were conducted in this work, and their results, are discussed in Sections~\ref{sec:experiments} and~\ref{sec:results}, followed finally by a short conclusion and discussion of the next steps for the project in Section~\ref{sec:conclusion}.
 
-\section{Previous Work}
+\section{Previous Work}\label{sec:previous-work}
 
-\section{Active Vision System}
+\section{Active Vision System}\label{sec:active-vision}
 
 The work we present in this paper is an advancement towards the ActiVis projects larger goal of developing a stand-alone mobile system that can guide a PwVI towards their desired destination with minimal user input or intervention. 
 This work focuses on guiding a user towards an object in one, static environment and is limited to 2 dimensions (pan and tilt).
@@ -85,7 +86,7 @@ In our previous work, we assumed a `perfect classifier' and solved the problem u
 In this work we do away with that somewhat naive assumption and implement a POMDP that can better handle the observation uncertainties inherent to modern object detectors and classifiers. 
 The design of the human controller is discussed next. 
 
-\section{Human Controller}
+\section{Human Controller}\label{sec:human-controller}
 
 The POMDP human control module that we implemented for this work is an extension to the MDP-based controller we made for the experiments described in~\cite{lock2019active}.
 It works by generating a trail of virtual waypoints for the user to point the camera towards.
@@ -239,7 +240,7 @@ The controller uses the new state observation $\omega$ to update its belief stat
 The policy output is an action from the action set $\mathbf{A}$ that specifies the next adjacent grid square to place the waypoint.
 For example, an `UP' output would result in the waypoint being placed one grid square, i.e. \SI{35}{\degree}, above where the current grid square within view. 
 
-\section{Experiment Design}
+\section{Experiment Design}\label{sec:experiments}
 
 To evaluate the effectiveness of our POMDP controller and guidance system, we designed a set of experiments that can measure its performance in driving a user towards a target object within the environment. 
 We also conducted an additional set of experiments with an alternative guidance system to act as a baseline measurement to compare our results to and provide additional context. 
@@ -312,9 +313,7 @@ All of the objects and their experiment placement is given in Table~\ref{tab:obj
   \end{tabular}
 \end{table}
 
-\section{Results}
-
-%\subsection{Target Acquisition}
+\section{Results}\label{sec:results}
 
 \subsection{Time to Target}
 
@@ -345,7 +344,7 @@ In this case, less device displacement is desirable, since it implies less physi
 The device displacement was both linear and angular in the $x, y, z, \phi$ (pan) and $\theta$ dimensions.
 By integrating these data with respect to time, we can get the total displacement for each dimension.
 
-\section{Conclusion}
+\section{Conclusion}\label{sec:conclusion}
 
 \bibliographystyle{splncs04}
 \bibliography{bib}
