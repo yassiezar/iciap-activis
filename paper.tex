@@ -55,8 +55,8 @@ To enable this, we expanded upon our previous work and implemented a partially o
 This work makes the following contributions:
 
 \begin{itemize}
-  \item a POMDP-based human controller that enables object search and guidance on a mobile phone;
-  \item a complete system pipeline that includes guidance instruction generation and transmission;
+  \item a controller that enables object search and guidance on a mobile phone;
+  \item a complete system pipeline that includes interfacing, object detection and human control;
   \item experiments that evaluate the efficacy of the proposed system.
 \end{itemize}
 
@@ -94,7 +94,7 @@ On the other hand, single-stage models, such as SSD, YOLO and MobileNet~\cite{li
 
 \section{Active Vision System}\label{sec:active-vision}
 
-The ActiVis project's goal is developing a stand-alone mobile system that can guide a PwVI towards their desired destination with minimal user input or intervention. 
+The ActiVis project's goal is developing a mobile system that can guide a PwVI towards their desired destination with minimal user input or intervention. 
 %This work focuses on guiding a user towards an object in one static environment and is limited to 2 dimensions (pan and tilt).
 
 A complete system diagram is given in Fig.~\ref{fig:sys-diagram}. 
@@ -133,14 +133,15 @@ The belief state is fully observable by the agent and can be used to infer the m
 
 A POMDP model is represented by the $8$-tuple
 
-\begin{equation}
+\begin{equation*}
   (\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \mathbf{b}, \gamma),
-\end{equation}
+\end{equation*}
 
 \noindent where $\mathbf{S}$ represents a finite set of discrete states, $\mathbf{A}$ is a set of discrete actions, $\mathbf{T}$ is a matrix containing the probabilities of transitioning from state $s$ to state $s'$, $s, s' \in \mathbf{S}$, after executing action $a$, $a \in \mathbf{A}$, and $\mathbf{R}$ is the reward the agent receives executing action $a$ and reaching state $s'$.
 $\mathbf{\Omega}$ is the set of possible state observations, while the matrix $\mathbf{O}$ contains the probabilities of making state observation $\omega$, $\omega \in \mathbf{\Omega}$, when in state $s$ after executing action $a$.
 Finally, $\mathbf{b}$ is the belief vector containing the state probability distribution and $\gamma$ is a discount factor that prioritises long-term over short-term rewards and affects the model's convergence rate. 
 $\mathbf{b}$ is updated for every timestep and action-observation pair.
+Each of the POMDP's parameters are discussed next. 
 %This update is done with
 
 %\begin{equation}
@@ -153,35 +154,23 @@ $\mathbf{b}$ is updated for every timestep and action-observation pair.
 %In essence, it is a measure of the sensor accuracy, and in this case it describes the object detector's classification accuracy and recall.
 %These parameters are given by the following. 
 
-Each of the POMDP's parameters are discussed next. 
-
 \subsubsection{State Space}
 
-The state is given by
-
-\begin{equation}
-  s = \langle u, n, v \rangle,
-\end{equation}
-
-\noindent where $u, u\in\mathbf{U}$, is the object within view, n the number of search steps taken since the search began and a binary variable $v$ that tracks the uniqueness of a waypoint's position for the search.
+The state is given by $s = \langle u, n, v \rangle$, where $u, u\in\mathbf{U}$, is the object within view, n the number of search steps taken since the search began and a binary variable $v$ that tracks the uniqueness of a waypoint's position for the search.
 
 \subsubsection{Actions}
 
-The possible actions that dictates the location the mobile device will generate the next waypoint are given by
-
-\begin{equation}
-  \mathbf{A} = \{ \textrm{UP, DOWN, LEFT, RIGHT} \}.
-\end{equation}
+The possible actions that dictates the location the mobile device will generate the next waypoint are given by $\mathbf{A} = \{ \textrm{UP, DOWN, LEFT, RIGHT} \}$.
 
 \subsubsection{Transitions}
 
 $\mathbf{T}$ was determined by extracting the inter-object spatial relationships for a limited number of objects in terms of the actions in $\mathbf{A}$ from the OpenImages~\cite{openimages} dataset. 
 For example, by iterating over the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 16\% of images containing both objects (see Fig.~\ref{fig:openimage}). 
-The transition function for this case will look like 
+The transition function for this case is $t(s, a, s') = t(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16$.
 
-\begin{equation}
-  t(s, a, s') = t(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16.
-\end{equation}
+%\begin{equation*}
+  %t(s, a, s') = t(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16.
+%\end{equation*}
 %An image displaying this relationship can be seen in Fig.~\ref{fig:openimage}.
 
 \begin{figure}
@@ -194,7 +183,7 @@ The transition function for this case will look like
 
 The reward function is designed to encourage the device controller to search for and find the target object by giving it a substantial reward for doing so, while penalising it for every action it takes that does not results in it finding the target object.
 Furthermore, additional penalties are given if the controller generates a waypoint in an area it has explored before $(v = \textrm{true}$) and when it exceeds some search length threshold denoted by $n_{\max}$.
-The rewards are given are summarised in Table~\ref{tab:rewards}.
+The rewards are summarised in Table~\ref{tab:rewards}.
 
 \begin{table}[h]
   \centering
@@ -222,12 +211,12 @@ These values were found by performing a set of classifier tests on the object de
 We encoded a total of 16 objects, including a `nothing' state where the detector does not see anything of interest, into the controller and object detector.
 These objects are given by $\mathbf{U}$, defined as 
 
-\begin{equation}
+\begin{equation*}
   \begin{split}
     \mathbf{U} = \{ nothing, monitor, keyboard, mouse, desk, laptop, mug, window,\\ 
       lamp, backpack, chair, couch, plant, telephone, whiteboard, door \}.
   \end{split}
-\end{equation}
+\end{equation*}
 
 We also set $n_{\max}$ to 12 waypoints, after which the agent gets penalised for every additional waypoint it generates that does not lead to the target object. 
 This results in a total of 352 reachable states ($n_{states} = 16\times11\times2$), with any state containing the target object acting as a terminal state.
@@ -343,14 +332,14 @@ However, for the larger, more static objects (e.g.\ a desk or door) there is cro
 These objects were placed in different locations relative to each other for the 2 experiments to minimise any learning effects that may occur between the experiments. 
 The objects in the guided experiment environment is
 
-\begin{equation}
+\begin{equation*}
   u_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
-\end{equation}
+\end{equation*}
 while the objects in the unguided experiment are
 
-\begin{equation}
+\begin{equation*}
   u_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
-\end{equation}
+\end{equation*}
 %A picture of the unguided experiment environment is given in Fig.~\ref{fig:experiment-env}. 
 
 %\begin{figure}
@@ -363,26 +352,26 @@ while the objects in the unguided experiment are
 
 \subsection{Target Acquisition}
 
-The target acquisition rate (TAR) is the proportion of experiment runs where the participant successfully found the target object with each respective system. 
-For example, a TAR of 0.5 indicates that a participant found the target objects 50\% of searches. 
-We set an upper time limit for each object search run of 45 seconds.
-When this upper threshold was reached, the search was recorded as a failure and the next run was started. 
+%For example, a TAR of 0.5 indicates that a participant found the target objects 50\% of searches. 
+%We set an upper time limit for each object search run of 45 seconds.
+%When this upper threshold was reached, the search was recorded as a failure and the next run was started. 
 
-We found that the unguided case produced a higher average TAR than the guided case (0.54 vs. 0.46), meaning that a participant was more around 8\% more likely to find more objects without our guidance than with it.
-However, the Kruskal-Wallis test for non-normal data shows that these sets of results are not statistically significantly different from one another ($p = 0.16$), meaning we are unable to conclude which approach produced better results. 
-The results are summarised in Table~\ref{tab:results}. 
+The target acquisition rate (TAR) is the proportion of experiment runs where the participant successfully found the target object with each respective system. 
+By taking each participant's TAR as a datum, we found that the unguided case produced a higher average TAR than the guided case (0.54 vs. 0.46), meaning that a participant found 8\% more objects without guidance.
+However, the Kruskal-Wallis (KW) test for non-normal data shows that these results are not statistically significantly different from one another ($p_{kw} = 0.16$), meaning we are unable to conclude which experiment produced better results. 
+All of the experiment results are summarised in Table~\ref{tab:results}. 
 
 \begin{table}
   \centering
-  \caption{A summary of the results. }\label{tab:results}
-  \begin{tabular}{p{5cm}p{2cm}p{2cm}}
+  \caption{A summary of the experiment results. }\label{tab:results}
+  \begin{tabular}{p{5cm}p{2cm}p{2cm}p{2.5cm}}
     \toprule
-    & \textbf{Guided} & \textbf{Unguided} \\\midrule
-    TAR [\%]           & $46\pm13$ & $54\pm15$   \\\midrule
-    Time to target [s] & $12.5\pm11.9$ & $17.2\pm11.5$ \\\midrule
-    Pan Angle Displacement [rad] & $0.68\pm1.1$ & $0.99\pm1.2$ \\\midrule
-    Tilt Angle Displacement [rad] & $0.68\pm1.1$ & $1.04\pm1.2$ \\\midrule
-    Linear Displacement [rad] & $0.23\pm0.22$ & $0.36\pm0.22$ \\\midrule
+    & \textbf{Guided} & \textbf{Unguided}  & \textbf{KW Statistic} \\\midrule
+    TAR [\%]           & $46\pm13$ & $54\pm15$ &  0.16 \\\midrule
+    Time to target [s] & $12.5\pm11.9$ & $17.2\pm11.5$ & 0.045 \\\midrule
+    Pan Angle Displacement [rad] & $0.68\pm1.1$ & $0.99\pm1.2$ & 0.029 \\\midrule
+    Tilt Angle Displacement [rad] & $0.68\pm1.1$ & $1.04\pm1.2$ & 0.011 \\\midrule
+    Linear Displacement [rad] & $0.23\pm0.22$ & $0.36\pm0.22$ & 0.012 \\\midrule
     \bottomrule
   \end{tabular}
 \end{table}
@@ -391,12 +380,12 @@ The results are summarised in Table~\ref{tab:results}.
 
 %\todo{Should I add CDF?}
 The time it took a participant to find a target object is an important indicator of performance for the system, where less time indicates a shorter search time and increased performance.
-The data for the search times for each dataset are given in Fig~\ref{fig:boxplot-time}.%, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
+The data for the search times for each dataset are displayed in Fig~\ref{fig:boxplot-time}.%, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/boxplot_time_to_target.png}
-  \caption{A set of boxplots comparing the time to target. }\label{fig:boxplot-time}
+  \caption{A set of boxplots comparing the time to target for each experiment. }\label{fig:boxplot-time}
 \end{figure}
 
 %\begin{figure}
@@ -406,37 +395,43 @@ The data for the search times for each dataset are given in Fig~\ref{fig:boxplot
 %\end{figure}
 
 %To compensate for the different numbers of targets found per participant and for each experiment setup, we average each participant's results, giving us 10 samples per experiment. 
-By inspecting the boxplots in Fig.~\ref{fig:boxplot-time}, it can be seen that the guidance system reduced the overall time it took the participants to find each target object.
-This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p=0.045$).
-These results are summarised in Table~\ref{tab:results}. 
-With this 27\% reduction in total time spent searching for a target object, we can conclude that a user benefits from using our smart guidance system, as opposed to relying on a simple object reader. 
+From Fig.~\ref{fig:boxplot-time}, it can be seen that the guidance system reduced the overall time it took the participants to find each target object.
+This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p_{kw}=0.045$).
+%These results are summarised in Table~\ref{tab:results}. 
+%With this 27\% reduction in total time spent searching for a target object, we can conclude that a user benefits from using our smart guidance system as opposed to relying on a simple object reader. 
 %This is supported by the CDFs in Fig.~\ref{fig:cum-time} that show that \todo{Discuss the less number of objects found and how it is not statistically signioficatn. Perhaps show it in CDF}
 
 \subsection{Movement}
 
 To give an indication of the effort required to find each target, we look at the mobile device's displacement data. 
-In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user, enhancing the user experience.
+In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user, enhancing the user experience and improving ease of use.
 %\todo{maybe cite paper that says less exertion is good}.
 
-The device displacement was both linear and angular in the $x, y, z, \phi$ (pan) and $\theta$ (tilt) dimensions.
-By integrating these data we can obtain and compare the total absolute displacement for each dimension.
-The angle and distance results are plotted in the boxplots in Figs.~\ref{fig:boxplot-angle} and~\ref{fig:boxplot-dist} respectively. 
+The device displacement was measured in both linear ($x, y, z$) and angular (pan, tilt) dimensions.
+By integrating these data we obtain and compare the total absolute displacement in each dimension.
+These results are plotted in Fig.~\ref{fig:boxplot-displacement}.
+
+%\begin{figure}
+  %\centering
+  %\includegraphics[width=0.7\textwidth]{figures/boxplot_angle.png}
+  %\caption{A set of boxplots comparing the angular distance the device travelled for each experiment. }\label{fig:boxplot-angle}
+%\end{figure}
+
+%\begin{figure}
+  %\centering
+  %\includegraphics[width=0.7\textwidth]{figures/boxplot_dist.png}
+  %\caption{A set of boxplots comparing the distance the device travelled for each experiment. }\label{fig:boxplot-dist}
+%\end{figure}
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/boxplot_angle.png}
-  \caption{A set of boxplots comparing the angular distance the device travelled for each experiment. }\label{fig:boxplot-angle}
+  \includegraphics[width=0.8\textwidth]{figures/boxplot_displacement.png}
+  \caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment. }\label{fig:boxplot-displacement}
 \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/boxplot_dist.png}
-  \caption{A set of boxplots comparing the distance the device travelled for each experiment. }\label{fig:boxplot-dist}
-\end{figure}
-
-The boxplots for the total angle displacement show a consistent reduction in radians for the guided case for both the pan (\SI{0.68}{\radian} vs. \SI{0.99}{\radian}, $p=0.029$) and tilt dimensions (\SI{0.68}{\radian} vs. \SI{1.05}{\radian}, $p=0.011$). 
+The boxplots for the total angle displacement show a consistent reduction in radians for the guided case for both the pan (\SI{0.68}{\radian} vs. \SI{0.99}{\radian}, $p_{kw}=0.029$) and tilt dimensions (\SI{0.68}{\radian} vs. \SI{1.05}{\radian}, $p_{kw}=0.011$). 
 The guidance system therefore reduces the total angular displacement to find the objects by 31\% and 35\% for the pan and tilt dimensions respectively. 
-The total linear displacement is also reduced when using the guidance interface by approximately 36\% (\SI{0.23}{\metre} vs. \SI{0.36}{\metre}, $p=0.012$).
+The total linear displacement is also reduced when using the guidance interface by approximately 36\% (\SI{0.23}{\metre} vs. \SI{0.36}{\metre}, $p_{kw}=0.012$).
 These results are summarised in Table~\ref{tab:results}.
 To conclude, the data show that the guidance interface reduced the total angular and linear displacement required to find the target objects in all dimensions by at least 31\%, reducing the total effort required by the user. 
 
@@ -444,8 +439,9 @@ To conclude, the data show that the guidance interface reduced the total angular
 
 In this work, we present a mobile guidance system that uses an object detector to scan the environment for objects and a POMDP-based controller and audio interface to present the user with guidance instructions. 
 We implemented this system into an Android app and tested it with a group of 10 participants to evaluate its effectiveness compared to a baseline, unguided case that only uses the object detector and relies on the human to generate their own search path. 
-The key results from these experiment is that the guidance system improved the participants' target-finding performance, reducing the search time and overall camera manipulation effort required.
+The key results from these experiment is that the guidance system improved the participants' target-finding performance, reducing the search time and overall camera manipulation effort required when compared to a base case.
 However, the participants were able to find 8\% more objects on average in the unguided case, but this result was found to be statistically insignificant. 
+With these results, we can reasonably conclude that our system enables a blind or blindfolded user to find a target object and does so better than the alternative base case.
 
 The next steps for the project are to refine and expand the object detector to include objects from other environments. 
 
