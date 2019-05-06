@@ -22,7 +22,7 @@
 }
 \authorrunning{Jacobus C. Lock et. al.}
 \institute{University of Lincoln, Lincoln, UK \and
-  Universita Degli Studi Di Padova, Italy
+  Universit\`{a} degli studi di Padova, Italy
 }
 
 \maketitle
@@ -291,26 +291,27 @@ For example, an `UP' output would result in the waypoint being placed one grid s
 
 \section{Experiment Design}\label{sec:experiments}
 
-To evaluate the effectiveness of our POMDP controller and guidance system, we designed a set of experiments that can measure its performance in driving a user towards a target object within the environment. 
-We also conducted an additional set of experiments with an alternative guidance system to act as a baseline measurement to compare our results to and provide additional context. 
-This alternative `guidance' system does not actually provide any guidance instructions to the user, instead it provides the user with the raw observation output from the object classifier and makes use of the user's intuition and prior environment knowledge to generate actions. 
-The goal of both the guided and unguided experiment cases were to find an object within a static environment. 
+To evaluate the guidance system's effectiveness, we designed a set of experiments to measure its performance in driving a user towards a target object within a static environment. 
+We also conducted an additional set of experiments with an alternative guidance system to act as a baseline measurement for our system's results. 
+This alternative system does not provide any guidance instructions to the user.
+Instead, it provides the user with the raw observations from the object classifier and makes use of the user's own intuition and prior environment knowledge to generate actions. 
+%The goal of both the guided and unguided experiment cases were to find an object within a static environment. 
 
-We recruited 10 participants (8 male, 2 female; average age 24.2 years) for the experiments, including 2 legally blind participants, where 1 was blind from birth and the other suffers from late onset blindness.
-Details on the design of these experiments are given in the next sections. 
+We recruited 10 participants (8 male, 2 female; average age 24.2 years) for the experiments, including 2 legally blind participants, where 1 was blind from birth and the other has late onset blindness.
+The other 8 participants were blindfolded for the experiments. 
+The app was run on an Asus ZenPhone AR with Android 7.0 and ARCore~\footnote{developers.google.com/ar/} and text-to-speech enabled. 
 
 \subsection{Unguided Case}
 
-The design goal of this experiment is to mimic how a typical person with healthy eyesight would behave if told to look for a given object. 
-In such a scenario, a person would exploit the objects currently within their view and their prior knowledge on a room's typical layout to make a decision on where to look next to find what they are looking for. 
-Take for example a person in bathroom facing the basin after washing their hands and looking for a hand-dryer. 
-It is unlikely that a hand dryer would be placed above or below a wash basin so it it is reasonable to believe that they would instinctively look at chest height on the walls to their left, right or behind them to find a dryer. 
+The goal of this experiment is to mimic how a typical person with normal eyesight would behave if told to look for an object. 
+In such a scenario, a person would see the objects currently within their view and use their prior knowledge on a room's typical layout to make a decision on where to look next.
+Take for example a person in bathroom facing the basin after washing their hands and looking for a hand-dryer: it is unlikely that a hand dryer would be placed above or below a wash basin so it it is reasonable to believe that they would instinctively look at chest height on the walls to their left, right or behind them to find a dryer. 
 
-For this experiment, a mobile camera and object detector acts as the participant's eyes and informs them what the objects within the camera's view and it is then up to the participant to exploit their prior knowledge of the given environment in order to manipulate the camera to point towards the target object. 
-This process is modelled by the schematic in Fig.~\ref{fig:sys-diagram-no-controller}, \emph{H}, acts as both the actuator and controller.
-The object detector was implemented in an Android app that uses the object classifier and Android's Text-to-Speech engine to read out any objects that it detected. 
-The app only reads out the objects when the participant requested it to by tapping on the screen. 
-When the target object comes within the camera's view and is correctly classified by the object detector, the device vibrated to inform the participant. 
+For this experiment, a mobile camera and object detector acts as the participant's eyes and informs them what the objects within the camera's view.
+It is then up to the participant to exploit their prior knowledge of the given environment and manipulate the camera to point it towards the target object. 
+This process is modelled by the schematic in Fig.~\ref{fig:sys-diagram-no-controller} where the human acts as both the actuator and controller.
+The app only reads out the objects upon the user's request by tapping on the screen. 
+When the target object comes within the camera's view and is correctly detected, the device vibrates to inform the participant. 
 
 \begin{figure}
   \centering
@@ -318,24 +319,25 @@ When the target object comes within the camera's view and is correctly classifie
   \caption{The control loop with the human acting as bot manipulator and controller. }\label{fig:sys-diagram-no-controller}
 \end{figure}
 
-Each participant was verbally told what the target object was they they were meant to find and each participant was given 45 seconds to find the target object. 
-In this case, the learning effect was ignored in order to mimic the typical search behaviour described earlier. 
+Each participant was verbally informed prior to each experiment run what the target object was and they were given 45 seconds to find it.
 Each experiment run was ended when a target was found or the time limit was reached. 
+In this case, the learning effect was ignored in order to mimic the typical search behaviour and allow proper use of prior knowledge. 
 This process was repeated a total of 8 times, once for each target object within the environment. 
 
 \subsection{Guided Case}
 
-In this experiment, we evaluate the performance of the guidance system in the object search task, where the perception and control tasks are performed by the guidance system and mobile device and the participant acts as the actuator, interpreting control signals and outputting actuation forces on the camera sensor. 
-This is modelled by the schematic in Fig.~\ref{fig:sys-diagram}. 
+In this experiment, we evaluate the performance of the guidance system in the object search task, where the perception and control tasks are performed by the guidance system and the participant acts as the actuator, interpreting control signals and outputting actuation forces on the camera sensor. 
+This is modelled in the schematic in Fig.~\ref{fig:sys-diagram}. 
 
 The participants were not told what the targets objects were in this experiment to eliminate the possibility of them ignoring the guidance instructions in order to try and find the target object themselves.
-An experiment run was therefore initiated when the experiment staff selected the target and was terminated when the target object was found or the time limit was exceeded.
+This also isolated the performance measurement to the system alone.
+An experiment run was therefore when the experiment staff selected the target and was terminated when the target object was found or the 45 second time limit was reached.
 We set a time limit of 45 seconds in this experiment as well.
 Each participant repeated this experiment 8 times, once for each object within the experiment's object set. 
 
 \subsection{Environment Setup}
 
-The environment, and the object placement within it, for both experiments was modelled on a typical office.
+The environment and the object placement within it for both experiments was modelled on a typical office.
 Measures were taken to ensure that both office environments were unique in layout and object placement. 
 However, for the larger, more static objects (e.g.\ a desk or door) there is cross-experiment occurrences, since most offices contain the same basic furniture and objects. 
 These objects were placed in different locations relative to each other for the 2 experiments to minimise any learning effects that may occur between the experiments. 
