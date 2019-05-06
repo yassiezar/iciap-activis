@@ -28,7 +28,10 @@
 
 \begin{abstract}
   The ActiVis project aims to deliver a system for a mobile device that is able to guide a person with visual impairments towards a target object or area in an unknown indoor environment. 
-  To do so, it uses new developments in object detection methods, mobile computing and action generation. 
+  To do so, it uses new developments in object detection methods, mobile computing, action generation and human-computer interfacing to interpret the user's surroundings and present useful guidance directions.
+  Our approach to action generation used a Markov Decision Process (MDP) to track the system's state and output the next best location to investigate to find a target object and has been shown to work in principle in~\cite{lock2019active}.
+  This work expands upon that by adding an object detector and adapting the decision-making process accordingly, providing a complete object search and guidance pipeline.
+  The improved ActiVis system was evaluated in a set of experiments and it outperformed the baseline, unguided case.
   \keywords{Active vision, vision impairment, object detection}
 \end{abstract}
 
@@ -345,7 +348,7 @@ A picture of the unguided experiment environment is given in Fig.~\ref{fig:exper
 \begin{figure}
   \centering
   \includegraphics[width=0.7\textwidth]{figures/environment.png}
-  \caption{A picture of the experiment setup. }\label{fig:boxplot-time}
+  \caption{A picture of the experiment setup. }\label{fig:experiment-env}
 \end{figure}
 
 \section{Results}\label{sec:results}
