@@ -256,7 +256,7 @@ With 120 training epochs with 1000 iterations each, we achieved a mAPs of 0.16 o
 %This dataset contains 459 images for each of the objects in $\mathbf{U}$ in different sizes and orientations and the objects used were the same objects that were used in the experiments. 
 %\todo{add mAPs we achived}
 
-\subsubsection{Controller}
+\subsubsection{Action Generator}
 
 The output from the POMDP model's training process is a policy file that defines the best location to place the next search waypoint based on the device's current state.
 This state is tracked by the device throughout the app's runtime by performing object detection and recording the device's previous search locations and previous waypoint positions
@@ -271,23 +271,23 @@ The policy output is an action from $\mathbf{A}$ that indicates the next adjacen
 \section{Experiment Design}\label{sec:experiments}
 
 To evaluate the guidance system's effectiveness, we designed a set of experiments to measure its performance in driving a user towards a target object within a static environment. 
-We also conducted an additional set of experiments with an alternative guidance system to act as a baseline measurement for our system's results. 
+We conducted an additional set of experiments with an alternative guidance system to act as a baseline measurement for our system's results. 
 This alternative system does not provide any guidance instructions to the user.
-Instead, it provides the user with the raw observations from the object classifier and makes use of the user's own intuition and prior environment knowledge to generate actions. 
+Instead, it provides the user with raw observations from the object classifier and relies on the user's intuition and prior knowledge to generate actions. 
 %The goal of both the guided and unguided experiment cases were to find an object within a static environment. 
 
-We recruited 10 participants (8 male, 2 female; average age 24.2 years) for the experiments, including 2 legally blind participants, where 1 was blind from birth and the other has late onset blindness.
-The other 8 participants were blindfolded for the experiments. 
+We recruited 10 participants (8 male, 2 female; average age 29.2 years) for the experiments, including 2 legally blind participants. 
+The other 8 participants were blindfolded to simulate blindness. 
 The app was run on an Asus ZenPhone AR with Android 7.0 and ARCore~\footnote{developers.google.com/ar/} and text-to-speech enabled. 
 
 \subsection{Unguided Case}
 
-The goal of this experiment is to mimic how a typical person with normal eyesight would behave if told to look for an object. 
-In such a scenario, a person would see the objects currently within their view and use their prior knowledge on a room's typical layout to make a decision on where to look next.
-Take for example a person in bathroom facing the basin after washing their hands and looking for a hand-dryer: it is unlikely that a hand dryer would be placed above or below a wash basin so it it is reasonable to believe that they would instinctively look at chest height on the walls to their left, right or behind them to find a dryer. 
+The goal of this experiment is to mimic a typical person with healthy eyesight's search behaviour. 
+In such a scenario, a person would see the objects currently within their field of view and use their prior knowledge and intuition to make a decision on where to look next.
+For example, a person in bathroom facing the basin after washing their hands is unlikely to find a hand dryer placed above or below the basin so it is reasonable to believe that they would instinctively look at chest height on the walls to their left, right or behind them instead. 
 
-For this experiment, a mobile camera and object detector acts as the participant's eyes and informs them what the objects within the camera's view.
-It is then up to the participant to exploit their prior knowledge of the given environment and manipulate the camera to point it towards the target object. 
+For this experiment, the mobile camera and object detector acts as the participants' eyes and informs them about the objects within the camera's view.
+It is then up to the participant to exploit their prior knowledge and intuition to manipulate the camera and find the target object. 
 This process is modelled by the schematic in Fig.~\ref{fig:sys-diagram-no-controller} where the human acts as both the actuator and controller.
 The app only reads out the objects upon the user's request by tapping on the screen. 
 When the target object comes within the camera's view and is correctly detected, the device vibrates to inform the participant. 
@@ -298,21 +298,19 @@ When the target object comes within the camera's view and is correctly detected,
   \caption{The control loop with the human acting as bot manipulator and controller. }\label{fig:sys-diagram-no-controller}
 \end{figure}
 
-Each participant was verbally informed prior to each experiment run what the target object was and they were given 45 seconds to find it.
-Each experiment run was ended when a target was found or the time limit was reached. 
-In this case, the learning effect was ignored in order to mimic the typical search behaviour and allow proper use of prior knowledge. 
-This process was repeated a total of 8 times, once for each target object within the environment. 
+Each participant was verbally informed prior to each experiment what the target object was and they were given 45 seconds to find it and each run was ended when a target was found or the time limit was reached. 
+The learning effect was ignored in order to mimic the normal search behaviour described earlier and allow full use of prior knowledge. 
+This process performed once for each object in the experiment set. 
 
 \subsection{Guided Case}
 
-In this experiment, we evaluate the performance of the guidance system in the object search task, where the perception and control tasks are performed by the guidance system and the participant acts as the actuator, interpreting control signals and outputting actuation forces on the camera sensor. 
+In this experiment, we evaluate the performance of the guidance system in an object search task, where the perception and control tasks are performed by the guidance system and the participant acts as the actuator, interpreting control signals and outputting actuation forces on the camera sensor. 
 This is modelled in the schematic in Fig.~\ref{fig:sys-diagram}. 
 
-The participants were not told what the targets objects were in this experiment to eliminate the possibility of them ignoring the guidance instructions in order to try and find the target object themselves.
-This also isolated the performance measurement to the system alone.
-An experiment run was therefore when the experiment staff selected the target and was terminated when the target object was found or the 45 second time limit was reached.
-We set a time limit of 45 seconds in this experiment as well.
-Each participant repeated this experiment 8 times, once for each object within the experiment's object set. 
+The participants were not told what the targets objects were in this experiment to eliminate the possibility of them ignoring the guidance instructions in order to try and find the target object faster themselves.
+This also isolated the performance measurement to the guidance system alone.
+An experiment run started with the experiment staff selecting the target and was terminated when the target object was found or the 45 second time limit was reached.
+This process performed once for each object in the experiment set. 
 
 \subsection{Environment Setup}
 
@@ -320,15 +318,15 @@ The environment and the object placement within it for both experiments was mode
 Measures were taken to ensure that both office environments were unique in layout and object placement. 
 However, for the larger, more static objects (e.g.\ a desk or door) there is cross-experiment occurrences, since most offices contain the same basic furniture and objects. 
 These objects were placed in different locations relative to each other for the 2 experiments to minimise any learning effects that may occur between the experiments. 
-The objects in the guided experiment environment is
+The objects in the guided experiment environment are
 
 \begin{equation*}
-  u_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
+  \mathbf{u}_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
 \end{equation*}
 while the objects in the unguided experiment are
 
 \begin{equation*}
-  u_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
+  \mathbf{u}_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
 \end{equation*}
 %A picture of the unguided experiment environment is given in Fig.~\ref{fig:experiment-env}. 
 
@@ -342,14 +340,14 @@ while the objects in the unguided experiment are
 
 \subsection{Target Acquisition}
 
-%For example, a TAR of 0.5 indicates that a participant found the target objects 50\% of searches. 
 %We set an upper time limit for each object search run of 45 seconds.
 %When this upper threshold was reached, the search was recorded as a failure and the next run was started. 
 
-The target acquisition rate (TAR) is the proportion of experiment runs where the participant successfully found the target object with each respective system. 
-By taking each participant's TAR as a datum, we found that the unguided case produced a higher average TAR than the guided case (0.54 vs. 0.46), meaning that a participant found 8\% more objects without guidance.
-However, the Kruskal-Wallis (KW) test for non-normal data shows that these results are not statistically significantly different from one another ($p_{kw} = 0.16$), meaning we are unable to conclude which experiment produced better results. 
-All of the experiment results are summarised in Table~\ref{tab:results}. 
+The target acquisition rate (TAR) is the proportion of objects the participants successfully found during an experiment. 
+For example, a TAR of 0.5 indicates that a participant found the target object in 50\% of searches. 
+Taking each participant's TAR as a datum, we found the unguided case produced a higher average TAR (0.54 vs. 0.46), meaning that a participant found around 8\% more objects without guidance instructions.
+However, the Kruskal-Wallis (KW) test for non-normal data shows that these results are statistically not significantly different from one another ($p_{kw} = 0.16$), meaning we cannot conclude which experiment produced the best TAR. 
+All the experiment results are summarised in Table~\ref{tab:results}. 
 
 \begin{table}
   \centering
@@ -369,8 +367,8 @@ All of the experiment results are summarised in Table~\ref{tab:results}.
 \subsection{Time to Target}
 
 %\todo{Should I add CDF?}
-The time it took a participant to find a target object is an important indicator of performance for the system, where less time indicates a shorter search time and increased performance.
-The data for the search times for each dataset are displayed in Fig~\ref{fig:boxplot-time}.%, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
+The time it takes to find a target object is an important indicator of system performance, where less time indicates a shorter search time and increased performance.
+The data for the search times for each experiment are shown in Fig.~\ref{fig:boxplot-time}.%, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
 
 \begin{figure}[h]
   \centering
@@ -386,7 +384,7 @@ The data for the search times for each dataset are displayed in Fig~\ref{fig:box
 
 %To compensate for the different numbers of targets found per participant and for each experiment setup, we average each participant's results, giving us 10 samples per experiment. 
 From Fig.~\ref{fig:boxplot-time}, it can be seen that the guidance system reduced the overall time it took the participants to find each target object.
-This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p_{kw}=0.045$).
+This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p_{kw}=0.045$), an improvement of around 27\%.
 %These results are summarised in Table~\ref{tab:results}. 
 %With this 27\% reduction in total time spent searching for a target object, we can conclude that a user benefits from using our smart guidance system as opposed to relying on a simple object reader. 
 %This is supported by the CDFs in Fig.~\ref{fig:cum-time} that show that \todo{Discuss the less number of objects found and how it is not statistically signioficatn. Perhaps show it in CDF}
@@ -394,7 +392,7 @@ This is confirmed by the data that show an average search time of 12.5s for the 
 \subsection{Movement}
 
 To give an indication of the effort required to find each target, we look at the mobile device's displacement data. 
-In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user, enhancing the user experience and improving ease of use.
+In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user.%, enhancing user experience and improving ease of use.
 %\todo{maybe cite paper that says less exertion is good}.
 
 The device displacement was measured in both linear ($x, y, z$) and angular (pan, tilt) dimensions.
@@ -413,7 +411,7 @@ These results are plotted in Fig.~\ref{fig:boxplot-displacement}.
   %\caption{A set of boxplots comparing the distance the device travelled for each experiment. }\label{fig:boxplot-dist}
 %\end{figure}
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/boxplot_displacement.png}
   \caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment. }\label{fig:boxplot-displacement}
@@ -427,9 +425,9 @@ To conclude, the data show that the guidance interface reduced the total angular
 
 \section{Conclusion}\label{sec:conclusion}
 
-In this work, we present a mobile guidance system that uses an object detector to scan the environment for objects and a POMDP-based controller and audio interface to present the user with guidance instructions. 
-We implemented this system into an Android app and tested it with a group of 10 participants to evaluate its effectiveness compared to a baseline, unguided case that only uses the object detector and relies on the human to generate their own search path. 
-The key results from these experiment is that the guidance system improved the participants' target-finding performance, reducing the search time and overall camera manipulation effort required when compared to a base case.
+In this work, we presented ActiVis, a mobile guidance system that uses an object detector to scan the environment for objects and a POMDP-based controller and audio interface to generate and present the user with guidance instructions. 
+We implemented this system on an Android app and tested it with a group of 10 participants to evaluate its effectiveness compared to a baseline, unguided case that only uses the object detector and relies on the human to generate the search path. 
+The key results from these experiment is that the guidance system improved the participants' target-searching performance, reducing the total search time and overall camera manipulation effort required when compared to a base case.
 However, the participants were able to find 8\% more objects on average in the unguided case, but this result was found to be statistically insignificant. 
 With these results, we can reasonably conclude that our system enables a blind or blindfolded user to find a target object and does so better than the alternative base case.
 
