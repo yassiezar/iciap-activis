@@ -69,7 +69,7 @@ The paper is concluded in Section~\ref{sec:conclusion}.
 %Mobile devices that can detect objects and guide PwVI in real-time using on-board processing power has become more feasible in recent years thanks to improvements in mobile computing and image processing methods.
 Early attempts to solve this guidance problem used markers encoded with object or environmental information and a smartphone that scans the environment for these simple patterns~\cite{gude2013blind,manduchi2012mobile}. 
 The device uses audio feedback to read out the embedded information or guide the user towards the markers. 
-Improvements to feature detectors have made it viable~\cite{redmon2016you,huang2017speed} to replace markers with real objects, while an alternative guidance approach is proposed in~\cite{bigham2010vizwiz} which uses a Mechanical Turk worker to manually locate and give guidance instructions to the desired object within a user-provided picture. 
+Improvements to feature detectors have made it viable~\cite{redmon2016you} to replace markers with real objects, while an alternative guidance approach is proposed in~\cite{bigham2010vizwiz} which uses a Mechanical Turk worker to manually locate and give guidance instructions to the desired object within a user-provided picture. 
 %that requires the user to send a photo of their environment to a Mechanical Turk worker who sends the position of the requested object within the picture back to the user. 
 %The SIFT based system in~\cite{schauerte2012assistive} is an example of a markerless system.
 
@@ -82,7 +82,7 @@ In this work, we are replacing the barcodes with real objects, thereby providing
 
 Object detectors mainly come in 2 flavours: 2-stage models that use an external algorithm to select regions of interest to perform object inference on~\cite{ren2015faster}, and single-stage models that generate multiple, differently-sized windows and checks each window for any objects.
 Between the 2 types, there is a speed-accuracy tradeoff, where 2-stage models typically produce more accurate results, but are slower and require more computing resources~\cite{liu2018deeplf}.
-On the other hand, single-stage models, such as SSD, YOLO and MobileNet~\cite{liu2016ssd,redmon2018yolo,howard2017mobilenet} produce less accurate results, but with drastically less parameters and FLOPS required to perform object inference than the 2-stage models. 
+On the other hand, single-stage models, such as SSD and MobileNet~\cite{liu2016ssd,howard2017mobilenet} produce less accurate results, but with drastically less parameters and FLOPS required to perform object inference than the 2-stage models. 
 %MobileNet~\cite{howard2017mobilenet} in particular is a 2-stage network designed specifically for mobile platforms with moderate precision levels, but can reach around 10 frames per second on a mobile platform.
 %The two-stage models, such as Faster R-CNN~\cite{ren2015faster}, use a region proposal network approach where an external algorithm proposes a region of interest that the classifier uses as input to recognise any objects. 
 %They typically reach higher accuracy, but at the cost of increased memory and computational resource requirements~\cite{liu2018deeplf}.
@@ -378,7 +378,7 @@ The data for the search times for each experiment are shown in Fig.~\ref{fig:box
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.6\textwidth]{figures/boxplot_time_to_target.png}
+  \includegraphics[width=0.7\textwidth]{figures/boxplot_time_to_target.png}
   \caption{A set of boxplots comparing the time to target for each experiment. }\label{fig:boxplot-time}
 \end{figure}
 
@@ -419,7 +419,7 @@ These results are plotted in Fig.~\ref{fig:boxplot-displacement}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/boxplot_displacement.png}
+  \includegraphics[width=0.8\textwidth]{figures/boxplot_displacement.png}
   \caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment. }\label{fig:boxplot-displacement}
 \end{figure}
 
