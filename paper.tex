@@ -158,10 +158,10 @@ These parameters are given by the following.
 The state is given by
 
 \begin{equation}
-  s = \langle z, n, v \rangle,
+  s = \langle u, n, v \rangle,
 \end{equation}
 
-\noindent where $z, z\in\mathbf{z}$, is the object within view, n the number of search steps taken since the search began and a binary variable $v$ that tracks the uniqueness of a waypoint's position for the search.
+\noindent where $u, u\in\mathbf{U}$, is the object within view, n the number of search steps taken since the search began and a binary variable $v$ that tracks the uniqueness of a waypoint's position for the search.
 
 \subsubsection{Actions}
 
@@ -216,11 +216,11 @@ These values were found by performing a set of classifier tests on the object de
 
 \subsubsection{Training}
 
-For our system, we encoded a total of 16 objects, including a `nothing' state where the detector does not see anything of interest, into the POMDP and object detector. These objects are given by $\mathbf{z}$, defined as 
+For our system, we encoded a total of 16 objects, including a `nothing' state where the detector does not see anything of interest, into the POMDP and object detector. These objects are given by $\mathbf{U}$, defined as 
 
 \begin{equation}
   \begin{split}
-    \mathbf{z} = \{ nothing, monitor, keyboard, mouse, desk, laptop, mug, window,\\ 
+    \mathbf{U} = \{ nothing, monitor, keyboard, mouse, desk, laptop, mug, window,\\ 
       lamp, backpack, chair, couch, plant, telephone, whiteboard, door \}
   \end{split}
 \end{equation}
@@ -255,13 +255,18 @@ With this interface and set of headphones, we are able to describe the location 
 
 \subsubsection{Object Detector}
 
-The SSD-Lite network is a single-stage object detection network that is based on the SSD architecture, but uses MobileNetV2\todo{cite} for its backbone.
+The SSD-Lite network is a single-stage object detection network that is based on the SSD architecture, but uses MobileNetV2~\cite{sandler2018mobilenetv2} for its backbone.
 This leads to a more `lightweight' model that has less parameters and requires less memory to perform inference tasks, which makes it suitable for a mobile platform. 
 This model achieves a mAPs of 0.22 with 4.3M parameters and 0.8B FLOPS~\cite{li2018tinydsod} on the COCO dataset~\cite{lin2014microsoft}. 
 When compared with the full SSD model, it achieves a slightly lower mAPs (0.25), but with significantly less parameters (34.3M) and FLOPS (34.36B).
-\todo{compare with alterniative}
+Tiny-DSOD~\cite{li2018tinydsod} is another object detection network focussed on mobile compatibility that is an alternative to the SSD-Lite network with similar accuracy and computing requirements(mAPs$=0.23$, parameters$=$1.15M, FLOPS$=$1.12B).
+However, we found that the SSD-Lite version produced better results in this application and we chose to implement it into our system.
 
-
+The network was trained with a maximum of 10000 annotated images for each object class in $\mathbf{A}$ with a 60\%/20\%/20\% split for training, validation and testing respectively.
+The images were taken from the OpenImages~\cite{openimages} dataset.
+We also built our own test small dataset to test the model with.\todo{should we include this? Doesnt look very good}
+This dataset contains 459 images for each of the objects in $\mathbf{U}$ in different sizes and orientations and the objects used were the same objects that were used in the experiments. 
+\todo{add mAPs we achived}
 
 \subsubsection{POMDP Controller}
 
@@ -328,12 +333,12 @@ These objects were placed in different locations relative to each other for the 
 The objects in the guided experiment environment is
 
 \begin{equation}
-  z_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
+  u_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
 \end{equation}
 while the objects in the unguided experiment are
 
 \begin{equation}
-  z_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
+  u_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
 \end{equation}
 A picture of the unguided experiment environment is given in Fig.~\ref{fig:experiment-env}. 
 
