@@ -219,7 +219,7 @@ The POMDP model is put through a training process to generate a policy that cont
 This is done by having the model explore the entire state-action-observation space and optimising the policy to maximise its long-term cumulative reward.
 The difficulty of solving POMDPs is that $\mathbf{b}$ is a vector of continuous probability distributions with infinite combinations, making POMDPs time-consuming or even impossible to solve exactly.
 We found this to be the case for our moderately-sized state space size and therefore opted to use an approximate method instead.
-Multiple algorithms have been proposed~\cite{bargiacchi2016dynamic,silver2010monte} and in this work we used the Point-Based Value Iteration (PBVI) algorithm~\cite{pineau2003point} as implemented in the AI-Toolbox library~\footnote{github.com/Svalorzen/AI-Toolbox} to solve the POMDP model.
+Multiple algorithms have been proposed~\cite{bargiacchi2016dynamic,silver2010monte} and in this work we used the Point-Based Value Iteration (PBVI) algorithm~\cite{pineau2003point} as implemented in the AI-Toolbox library\footnote{github.com/Svalorzen/AI-Toolbox} to solve the POMDP model.
 The PBVI algorithm speeds up the optimisation process by selecting a smaller subset of representative belief points from the belief function and tracking these points only. 
 Using the PBVI algorithm, we generated a total of 15 policies, one for each target object. 
 
@@ -271,14 +271,28 @@ The policy output is an action from $\mathbf{A}$ that indicates the next adjacen
 \section{Experiment Design}\label{sec:experiments}
 
 To evaluate the guidance system's effectiveness, we designed a set of experiments to measure its performance in driving a user towards a target object within a static environment. 
-We conducted an additional set of experiments with an alternative guidance system to act as a baseline measurement for our system's results. 
-This alternative system does not provide any guidance instructions to the user.
-Instead, it provides the user with raw observations from the object classifier and relies on the user's intuition and prior knowledge to generate actions. 
+We conducted an additional set of experiments with an alternative system that relies on a user's intuition and prior knowledge to generate actions instead, to act as a baseline measurement for our system's results. 
+%This alternative system does not provide any guidance instructions to the user.
+%Instead, it provides the user with raw observations from the object classifier and relies on the user's intuition and prior knowledge to generate actions. 
 %The goal of both the guided and unguided experiment cases were to find an object within a static environment. 
+
+Both experiment environments and the object placements within them were modelled on a typical office and care was taken to ensure that both environments were unique in layout and object placement. 
+However, for the larger, more static objects (e.g.\ a desk or door) there is cross-experiment occurrences which is not a problem since most offices contain the same basic furniture and objects. 
+The objects were placed in different locations relative to each other for the 2 experiments to minimise any learning effects between experiments. 
+The objects in the guided experiment environment are
+
+\begin{equation*}
+  \mathbf{u}_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
+\end{equation*}
+while the objects in the unguided experiment are
+
+\begin{equation*}
+  \mathbf{u}_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
+\end{equation*}
 
 We recruited 10 participants (8 male, 2 female; average age 29.2 years) for the experiments, including 2 legally blind participants. 
 The other 8 participants were blindfolded to simulate blindness. 
-The app was run on an Asus ZenPhone AR with Android 7.0 and ARCore~\footnote{developers.google.com/ar/} and text-to-speech enabled. 
+The app was run on an Asus ZenPhone AR with Android 7.0 and ARCore\footnote{developers.google.com/ar/} and text-to-speech enabled. 
 
 \subsection{Unguided Case}
 
@@ -312,22 +326,22 @@ This also isolated the performance measurement to the guidance system alone.
 An experiment run started with the experiment staff selecting the target and was terminated when the target object was found or the 45 second time limit was reached.
 This process performed once for each object in the experiment set. 
 
-\subsection{Environment Setup}
+%\subsection{Environment Setup}
 
-The environment and the object placement within it for both experiments was modelled on a typical office.
-Measures were taken to ensure that both office environments were unique in layout and object placement. 
-However, for the larger, more static objects (e.g.\ a desk or door) there is cross-experiment occurrences, which is not a problem since most offices contain the same basic furniture and objects. 
-These objects were placed in different locations relative to each other for the 2 experiments to minimise any learning effects that may occur between the experiments. 
-The objects in the guided experiment environment are
+%The environment and the object placement within it for both experiments was modelled on a typical office.
+%Measures were taken to ensure that both office environments were unique in layout and object placement. 
+%However, for the larger, more static objects (e.g.\ a desk or door) there is cross-experiment occurrences, which is not a problem since most offices contain the same basic furniture and objects. 
+%These objects were placed in different locations relative to each other for the 2 experiments to minimise any learning effects that may occur between the experiments. 
+%The objects in the guided experiment environment are
 
-\begin{equation*}
-  \mathbf{u}_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
-\end{equation*}
-while the objects in the unguided experiment are
+%\begin{equation*}
+  %\mathbf{u}_{guided} = \{ door, desk, chair, whiteboard, mouse, laptop, backpack, mug \},
+%\end{equation*}
+%while the objects in the unguided experiment are
 
-\begin{equation*}
-  \mathbf{u}_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
-\end{equation*}
+%\begin{equation*}
+  %\mathbf{u}_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
+%\end{equation*}
 %A picture of the unguided experiment environment is given in Fig.~\ref{fig:experiment-env}. 
 
 %\begin{figure}
