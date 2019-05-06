@@ -12,14 +12,14 @@
 
 \begin{document}
 
-\title{My Cool Title}
+\title{ActiVis: Mobile Object Detection and Active Guidance for People with Visual Impairments}
 
 \author{Jacobus C. Lock\inst{1} \and
   Grzegorz Cielniak\inst{1} \and
-  Andrea Tramontano\inst{2} \and
+  Andrea G. Tramontano\inst{2} \and
   Nicola Bellotto\inst{1}
 }
-\authorrunning{J.C. Lock et. al.}
+\authorrunning{Jacobus C. Lock et. al.}
 \institute{University of Lincoln, Lincoln, UK \and
   Universita Degli Studi Di Padova, Italy
 }
@@ -40,19 +40,18 @@
 It is estimated that there are almost half a billion people today that live with mild to severe levels of vision impairments or total blindness and this number is expected to significantly rise with an ageing population~\cite{bourne2017magnitude}.
 There has been a rise interest from industrial partners in utilising modern technology to make their products more accessible and improvements in modern computing power and image processing capabilities have made this easier.
 The work we present here is part of the ActiVis project that aims to assist people with vision impairments (PwVI) to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera.
-This system implements ideas from the active vision field~\cite{bajcsy2017,bellotto2013}, but replaces the electro-mechanical servo typically found in active vision systems, with a user's arm and hand as pictured in Fig.~\ref{fig:system-in-use}\todo{replace with actual picture}.
+This system implements ideas from the active vision field~\cite{bajcsy2017,bellotto2013}, but replaces the electro-mechanical servo typically found in active vision systems, with a user's arm and hand as pictured in Fig.~\ref{fig:system-in-use}.
 This project expands upon concepts originally proposed in~\cite{bellotto2013} and~\cite{lock2017portable} and builds off of the system introduced in~\cite{lock2019active}.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{figures/system_use.png}
-  \caption{The system in use during an experiment. }\label{fig:system-in-use}
+  \caption{The system in use during an experiment with a blindfolded participant. }\label{fig:system-in-use}
 \end{figure}
 
 Our active search system uses the camera's current and previous views as input and leverages its understanding of inter-object spatial relationships to determine the best navigation action to determine the best action to take to reach the target object.
 To enable this, we expanded upon our previous work and implemented a partially observable Markov Decision Process (POMDP)~\cite{bellman1957markovian} on a mobile phone generates real-time navigation instructions to guide the user to their target object.
-
-This work includes the following contributions:
+This work makes the following contributions:
 
 \begin{itemize}
   \item a POMDP-based human controller that enables object search and guidance on a mobile phone;
@@ -82,7 +81,7 @@ In this work, we are replacing the barcodes with real objects, thereby closing t
 
 Object detectors can be divided into two main categories that use single-stage and 2-stage methods.  
 The two-stage models, such as Faster R-CNN~\cite{ren2015faster}, use a region proposal network approach where an external algorithm proposes a region of interest that the classifier uses as input to recognise any objects. 
-They typically reach higher accuracy, but at the cost of increased memory and computational resource requirements.\todo{cite}
+They typically reach higher accuracy, but at the cost of increased memory and computational resource requirements~\cite{liu2018deeplf}.
 On the other hand, single-stage methods apply multiple differently sized windows over the image and checks if any objects appear in those windows. 
 These methods, such as Single-Shot Detection (SSD)~\cite{liu2016ssd} and You Only Look Once (YOLO)~\cite{redmon2018yolo}, typically need less computational resources, but at the cost of decreased accuracy.
 Marrying a single-stage method to a feature extractor yields higher accuracy, by at the cost of increased computational resources. 
@@ -101,7 +100,7 @@ This diagram shows a typical feedback control loop that generates a control sign
 \begin{figure}
   \centering
   \includegraphics[width=0.75\textwidth]{figures/control_loop.png}
-  \caption{System control loop: $r$ is the reference object, $e$ the error signal, $u$ and $u^*$ the original and interpreted control signals and $y$ is the current object observation. $K$, $H$ and $P$ are the control, human and sensor blocks respectively. }\label{fig:sys-diagram}
+  \caption{The system control loop including a human and the controller.}\label{fig:sys-diagram}
 \end{figure}
 
 In this case, the error is defined as the difference between the desired object and the object currently within view. 
@@ -265,11 +264,13 @@ When compared with the full SSD model, it achieves a slightly lower mAPs (0.25),
 Tiny-DSOD~\cite{li2018tinydsod} is another object detection network focussed on mobile compatibility that is an alternative to the SSD-Lite network with similar accuracy and computing requirements(mAPs$=0.23$, parameters$=$1.15M, FLOPS$=$1.12B).
 However, we found that the SSD-Lite version produced better results in this application and we chose to implement it into our system.
 
-The network was trained with a maximum of 10000 annotated images for each object class in $\mathbf{A}$ with a 60\%/20\%/20\% split for training, validation and testing respectively.
+The network was trained with a maximum of 10000 annotated object samples for each object class in $\mathbf{A}$ with a 60\%/20\%/20\% split for training, validation and testing respectively.
 The images were taken from the OpenImages~\cite{openimages} dataset.
-We also built our own test small dataset to test the model with.\todo{should we include this? Doesnt look very good}
-This dataset contains 459 images for each of the objects in $\mathbf{U}$ in different sizes and orientations and the objects used were the same objects that were used in the experiments. 
-\todo{add mAPs we achived}
+We set a relatively high confidence threshold of 0.7 to reduce the likelihood of false-positives.
+With 120 training epochs with 1000 iterations each, we achieved a mAPs of 0.16 on this dataset and produced a TensorFlow Lite model that is compatible with Android. 
+%We also built our own test small dataset to test the model with.\todo{should we include this? Doesnt look very good}
+%This dataset contains 459 images for each of the objects in $\mathbf{U}$ in different sizes and orientations and the objects used were the same objects that were used in the experiments. 
+%\todo{add mAPs we achived}
 
 \subsubsection{POMDP Controller}
 
@@ -290,7 +291,7 @@ We also conducted an additional set of experiments with an alternative guidance 
 This alternative `guidance' system does not actually provide any guidance instructions to the user, instead it provides the user with the raw observation output from the object classifier and makes use of the user's intuition and prior environment knowledge to generate actions. 
 The goal of both the guided and unguided experiment cases were to find an object within a static environment. 
 
-We recruited 10 sighted participants that were blindfolded for the experiments, as well as 2 legally blind participants, where 1 was blind from birth and the other suffers from late onset blindness\todo{Give participant stats}.
+We recruited 10 participants (8 male, 2 female; average age 24.2 years) for the experiments, including 2 legally blind participants, where 1 was blind from birth and the other suffers from late onset blindness.
 Details on the design of these experiments are given in the next sections. 
 
 \subsection{Unguided Case}
@@ -343,13 +344,13 @@ while the objects in the unguided experiment are
 \begin{equation}
   u_{unguided} = \{ door, desk, chair, whiteboard, mouse, monitor, telephone, keyboard \}.
 \end{equation}
-A picture of the unguided experiment environment is given in Fig.~\ref{fig:experiment-env}. 
+%A picture of the unguided experiment environment is given in Fig.~\ref{fig:experiment-env}. 
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/environment.png}
-  \caption{A picture of the experiment setup. }\label{fig:experiment-env}
-\end{figure}
+%\begin{figure}
+  %\centering
+  %\includegraphics[width=0.7\textwidth]{figures/environment.png}
+  %\caption{A picture of the experiment setup. }\label{fig:experiment-env}
+%\end{figure}
 
 \section{Results}\label{sec:results}
 
@@ -376,7 +377,7 @@ The results are summarised in Table~\ref{tab:results}.
 
 \subsection{Time to Target}
 
-\todo{Should I add CDF?}
+%\todo{Should I add CDF?}
 The time it took a participant to find a target object is an important indicator of performance for the system, where less time indicates a shorter search time and increased performance.
 The data for the search times for each dataset are given in Fig~\ref{fig:boxplot-time}.%, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
 
@@ -392,7 +393,6 @@ The data for the search times for each dataset are given in Fig~\ref{fig:boxplot
   %\caption{A set of CDFs comparing the time to target. }\label{fig:cum-time}
 %\end{figure}
 
-\todo{update numbers}
 %To compensate for the different numbers of targets found per participant and for each experiment setup, we average each participant's results, giving us 10 samples per experiment. 
 By inspecting the boxplots in Fig.~\ref{fig:boxplot-time}, it can be seen that the guidance system reduced the overall time it took the participants to find each target object.
 This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p=0.045$).
@@ -403,7 +403,8 @@ With this 27\% reduction in total time spent searching for a target object, we c
 \subsection{Movement}
 
 To give an indication of the effort required to find each target, we look at the mobile device's displacement data. 
-In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user, enhancing the user experience\todo{maybe cite paper that says less exertion is good}.
+In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user, enhancing the user experience.
+%\todo{maybe cite paper that says less exertion is good}.
 
 The device displacement was both linear and angular in the $x, y, z, \phi$ (pan) and $\theta$ (tilt) dimensions.
 By integrating these data we can obtain and compare the total absolute displacement for each dimension.
