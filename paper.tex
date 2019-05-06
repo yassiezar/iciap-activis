@@ -64,30 +64,32 @@ The experiments that were conducted in this work, and their results, are discuss
 
 \section{Previous Work}\label{sec:previous-work}
 
-Making a mobile device that can detect objects and guide a PwVI in real-time and using on-board processing power has become much more feasible in recent years, thanks to improvements to mobile computing power and image processing methods.
-Early attempts to solve this guidance problem made use of special markers or barcodes, encoded with object or environmental information, and a smartphone that can efficiently scan the environment for these simple patterns~\cite{gude2013blind,iannizzotto2005badge3d,manduchi2012mobile}. 
-The device then uses some feedback mode (e.g.\ voice, Braille) to read out the embedded information or guide the user towards the markers. 
-Improvements to feature detectors and deep networks have made it more viable~\cite{redmon2016you,huang2017speed} to replace the markers with real objects, while providing the same guidance functionality.
-The SIFT and SURF-based systems in~\cite{schauerte2012assistive} is an example of a markerless system.
-An alternative detection approach proposed in~\cite{bigham2010vizwiz}, and commercialised in the `Be My Eyes' app~\cite{bemyeyes2019}, requires the user to send a photo of their environment and target object to a Mechanical Turk worker or volunteer that then sends the position of the requested object within the picture back to the user. 
+Making a mobile device that can detect objects and guide a PwVI in real-time using on-board processing power has become more feasible in recent years thanks to improvements in mobile computing power and image processing methods.
+Early attempts to solve this guidance problem made use of special markers encoded with object or environmental information, and a smartphone that can scan the environment for these simple patterns~\cite{gude2013blind,iannizzotto2005badge3d,manduchi2012mobile}. 
+The device uses some feedback mode (e.g.\ voice, Braille) to read out the embedded information or guide the user towards the markers. 
+Improvements to feature detectors and deep networks have made it more viable~\cite{redmon2016you,huang2017speed} to replace markers with real objects while providing the same guidance functionality.
+The SIFT based system in~\cite{schauerte2012assistive} is an example of a markerless system.
+An alternative detection approach proposed in~\cite{bigham2010vizwiz}, and commercialised in the `Be My Eyes' app~\cite{bemyeyes2019}, requires the user to send the desired object and a photo of their environment to a Mechanical Turk worker or volunteer that sends the position of the requested object within the picture back to the user. 
 
-The issue with the marker-based approach is that it requires a significant amount of effort to place and maintain markers around an environment.
-This problem is remedied in the markerless systems.
-However, both of these approaches are passive in their guidance approach and rely on the user placing the desired marker/object within the camera's view by themselves first before any guidance can be provided. 
-The human-based systems from~\cite{bigham2010vizwiz,bemyeyes2019} can leverage a human's understanding of the environment to help guide a person to the correct area, but the drawback here is that there is a significant lag time and a significant reliance on a good internet connection and remote worker being available. 
-Our previous work on the ActiVis system~\cite{lock2019active} addressed the passive guidance issue by implementing a controller that provides the user with instructions on where to point the device to find an out of view object and we proved that this is a viable method to search for an object. 
-However, this work relied upon physical barcodes, encoded with object information, to simulate real objects.
-In this work, we are replacing the barcodes with real objects, thereby closing the object detection and guidance loop. 
+The issue with the marker-based approach is that it requires a significant amount of effort to place and maintain markers around an environment, which is remedied by markerless systems.
+However, both of these approaches are passive in their guidance approach and rely on the user placing the desired marker/object within the camera's view by themselves first before any guidance is provided. 
+The systems in~\cite{bigham2010vizwiz,bemyeyes2019} can leverage a human's understanding of the environment to help guide a person to the correct area, but the drawback here is that there is significant lag, and a reliance on a good internet connection and remote worker being available. 
+Our previous work on the ActiVis system~\cite{lock2019active} addressed the passive guidance issue by implementing an MDP-based controller that provides the user with pointing instructions to find an out of view object and proved that this is a viable method to search for an object. 
+However, this work relied on physical barcodes encoded with object information to simulate real objects.
+In this work, we are replacing the barcodes with real objects, thereby providing a complete object detection and guidance pipeline. 
 
-Object detectors can be divided into two main categories that use single-stage and 2-stage methods.  
-The two-stage models, such as Faster R-CNN~\cite{ren2015faster}, use a region proposal network approach where an external algorithm proposes a region of interest that the classifier uses as input to recognise any objects. 
-They typically reach higher accuracy, but at the cost of increased memory and computational resource requirements~\cite{liu2018deeplf}.
-On the other hand, single-stage methods apply multiple differently sized windows over the image and checks if any objects appear in those windows. 
-These methods, such as Single-Shot Detection (SSD)~\cite{liu2016ssd} and You Only Look Once (YOLO)~\cite{redmon2018yolo}, typically need less computational resources, but at the cost of decreased accuracy.
-Marrying a single-stage method to a feature extractor yields higher accuracy, by at the cost of increased computational resources. 
-There is therefore a fine speed-accuracy trade-off to be made, particularly in a mobile context where processing resources are limited. 
-MobileNet~\cite{howard2017mobilenet} is a classifier network that can be used as a feature extractor  that introduced depth-wise separable convolutions that decrease the number of operations needed to make a convolution.
-This leads to model that uses much less memory, but again with a small drop in accuracy.
+Object detectors can be divided into two main categories: 2-stage models that use an external algorithm to select regions of interest to perform object inference on~\cite{ren2015faster}, and single-stage models that generate multiple, differently-sized windows and checks each window for any objects.
+Between the 2 types, there is a speed-accuracy tradeoff, where 2-stage models typically produce more accurate results, but are slower and require more computing resources~\cite{liu2018deeplf}.
+On the other hand, single-stage models, such as SSD, YOLO and MobileNet~\cite{liu2016ssd,redmon2018yolo,howard2017mobilenet} produce less accurate results, but with drastically less parameters and FLOPS required to perform object inference than the 2-stage models. 
+%MobileNet~\cite{howard2017mobilenet} in particular is a 2-stage network designed specifically for mobile platforms with moderate precision levels, but can reach around 10 frames per second on a mobile platform.
+%The two-stage models, such as Faster R-CNN~\cite{ren2015faster}, use a region proposal network approach where an external algorithm proposes a region of interest that the classifier uses as input to recognise any objects. 
+%They typically reach higher accuracy, but at the cost of increased memory and computational resource requirements~\cite{liu2018deeplf}.
+%On the other hand, single-stage methods apply multiple differently sized windows over the image and checks if any objects appear in those windows. 
+%These methods, such as Single-Shot Detection (SSD)~\cite{liu2016ssd} and You Only Look Once (YOLO)~\cite{redmon2018yolo}, typically need less computational resources, but at the cost of decreased accuracy.
+%Marrying a single-stage method to a feature extractor yields higher accuracy, by at the cost of increased computational resources. 
+%There is therefore a fine speed-accuracy trade-off to be made, particularly in a mobile context where processing resources are limited. 
+%MobileNet~\cite{howard2017mobilenet} is a classifier network that can be used as a feature extractor  that introduced depth-wise separable convolutions that decrease the number of operations needed to make a convolution.
+%This leads to model that uses much less memory, but again with a small drop in accuracy.
 
 \section{Active Vision System}\label{sec:active-vision}
 
