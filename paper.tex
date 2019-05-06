@@ -93,8 +93,8 @@ On the other hand, single-stage models, such as SSD, YOLO and MobileNet~\cite{li
 
 \section{Active Vision System}\label{sec:active-vision}
 
-The work we present in this paper is an advancement towards the ActiVis projects larger goal of developing a stand-alone mobile system that can guide a PwVI towards their desired destination with minimal user input or intervention. 
-This work focuses on guiding a user towards an object in one, static environment and is limited to 2 dimensions (pan and tilt).
+The ActiVis project's goal is developing a stand-alone mobile system that can guide a PwVI towards their desired destination with minimal user input or intervention. 
+%This work focuses on guiding a user towards an object in one static environment and is limited to 2 dimensions (pan and tilt).
 
 A complete system diagram is given in Fig.~\ref{fig:sys-diagram}. 
 This diagram shows a typical feedback control loop that generates a control signal to minimise some error signal, but has been modified to incorporate a human within the loop.
@@ -105,16 +105,15 @@ This diagram shows a typical feedback control loop that generates a control sign
   \caption{The system control loop including a human and the controller.}\label{fig:sys-diagram}
 \end{figure}
 
-In this case, the error is defined as the difference between the desired object and the object currently within view. 
-The implication of this modification is that an additional block, \emph{H}, is added to simulate a human that receives an control signal, \emph{u}, from the controller, \emph{K}. 
+In this case, the error, $e$, is defined as the difference between the desired object and the object currently within view. 
+The implication of adding a human into the loop is that an additional block, \emph{H}, is added to simulate a human that receives an control signal, \emph{u}, from the controller, \emph{K}. 
 However, the challenge with people is that a person may interpret \emph{u} in any unpredictable way (i.e.\ apply a transformation) that results in the signal \emph{u*} that points the camera, \emph{P}, to a new location containing a new object observation, \emph{y}.
-It is therefore important to design \emph{K} to take be robust enough to accommodate different user habits and limitations and ensure that \emph{u*} tracks \emph{u} as closely as possible. 
+It is therefore important to design \emph{K} to be robust enough to accommodate different user habits and limitations and ensure that \emph{u*} tracks \emph{u} as closely as possible. 
 %These design considerations are addressed in previous work. \todo{how to state that we designed the interface already if its unpublished?}
 
 Another fact to take note of is the measurement noise, \emph{n}, added in the feedback loop that simulates an object detector making classification errors that will influence the action that \emph{K} generates. 
-In our previous work, we assumed a `perfect classifier' and solved the problem using a plain Markov decision process (MDP). 
-In this work we do away with that somewhat naive assumption and implement a POMDP that can better handle the observation uncertainties inherent to modern object detectors and classifiers. 
-The design of the human controller is discussed next. 
+In our previous work, we assumed a perfect classifier and solved the problem using a Markov decision process (MDP). 
+In this work we do away with that somewhat naive assumption and implement a POMDP that can handle observation uncertainties in object detectors and classifiers. 
 
 \section{Human Controller}\label{sec:human-controller}
 
