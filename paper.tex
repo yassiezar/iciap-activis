@@ -40,7 +40,7 @@
 
 There are an estimated half a billion people that live with mild to severe vision impairment or total blindness and this number is expected to significantly rise with an ageing population~\cite{bourne2017magnitude}.
 There has been a rise interest from industrial partners in utilising modern technology to make their products more accessible and improvements in modern computing power and image processing capabilities have made this easier.
-This work is part of the ActiVis project that aims to enable people with vision impairments (PwVI) to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera.
+This work is part of the ActiVis\footnote{lcas.github.io/ActiVis} project that aims to enable people with vision impairments (PwVI) to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera.
 This system implements active vision ideas~\cite{bajcsy2017}, but replaces the electro-mechanical servo typically found in active vision systems with a user's arm and hand as pictured in Fig.~\ref{fig:system-in-use}.
 This project expands upon concepts proposed in~\cite{bellotto2013,lock2017portable} and builds off of the system introduced in~\cite{lock2019active}.
 
@@ -81,7 +81,7 @@ However, this work used encoded barcodes to simulate real objects.
 In this work, we are replacing the barcodes with real objects, thereby providing a complete object detection and guidance pipeline. 
 
 Object detectors mainly come in 2 flavours: 2-stage models that use an external algorithm to select regions of interest to perform object inference on~\cite{ren2015faster}, and single-stage models that generate multiple, differently-sized windows and checks each window for any objects.
-Between the 2 types, there is a speed-accuracy tradeoff, where 2-stage models typically produce more accurate results, but are slower and require more computing resources~\cite{liu2018deeplf}.
+Between the 2 types, there is a speed-accuracy trade-off, where 2-stage models typically produce more accurate results, but are slower and require more computing resources~\cite{liu2018deeplf}.
 On the other hand, single-stage models, such as SSD and MobileNet~\cite{liu2016ssd,howard2017mobilenet} produce less accurate results, but with drastically less parameters and FLOPS required to perform object inference than the 2-stage models. 
 %MobileNet~\cite{howard2017mobilenet} in particular is a 2-stage network designed specifically for mobile platforms with moderate precision levels, but can reach around 10 frames per second on a mobile platform.
 %The two-stage models, such as Faster R-CNN~\cite{ren2015faster}, use a region proposal network approach where an external algorithm proposes a region of interest that the classifier uses as input to recognise any objects. 
@@ -131,7 +131,7 @@ The design and implementation of this controller are discussed next.
 
 A POMDP is an extension to the MDP model that allows it to handle cases where the state is not directly observable, allowing it to be used in more realistic scenarios. 
 %In this case, the state is inferred based on the model parameters and the associated sensor accuracy (if a sensor is 100\% accurate, the state would be directly observable).
-The implication of this is that a POMDP-based agent does not know its state at any point in time, but must infer it based on the known model parameters and sensor accuracy, the object detector's accuracy in this case.
+The implication of this is that a POMDP-based agent does not know its state at any point in time, but must infer it based on the known model parameters and sensor accuracy, which is the object detector's accuracy in this case.
 This state inference relies on a so-called belief meta-state that is updated with additional observations to reflect the likelihood that the agent is in any given state.
 The belief state is fully observable by the agent and can be used to infer the mobile device's current state and generate the next action.
 
@@ -242,13 +242,13 @@ A similar approach was used in~\cite{schauerte2012assistive}.
 
 SSD-Lite is a single-stage object detection and classification network that is based on the SSD architecture that implements MobileNetV2~\cite{sandler2018mobilenetv2}.
 This is a lightweight model that requires relatively little memory to perform inference tasks, making it suitable for mobile platforms. 
-This model achieves a mAPs of 0.22 with 4.3M parameters and 0.8B FLOPS~\cite{li2018tinydsod} on the COCO dataset.
-The full SSD model achieves a slightly higher mAPs (0.25), but with significantly more parameters (34.3M) and FLOPS (34.36B).
+This model achieves a mean average precision (mAP) of 0.22 with 4.3M parameters and 0.8B FLOPS~\cite{li2018tinydsod} on the COCO dataset.
+The full SSD model achieves a slightly higher mAP (0.25), but with significantly more parameters (34.3M) and FLOPS (34.36B).
 %Tiny-DSOD~\cite{li2018tinydsod}, an alternative to SSD-Lite, has similar precision and computing requirements (mAPs=0.23, parameters=1.15M, FLOPS=1.12B), but we found that SSD-Lite produced better results for this application and chose to implement it in ActiVis.
 
 The network was trained with a maximum of 10000 object samples for each class in $\mathbf{U}$, taken from the OpenImages dataset~\cite{openimages}, with a 60\%/20\%/20\% split for training, validation and testing respectively.
 We set a relatively high confidence threshold of 0.7 to reduce the likelihood of false-positives.
-With 120 training epochs with 1000 iterations each, we achieved a mAPs of 0.16 on this dataset and produced a TensorFlow Lite model that is compatible with Android and we used this model to implement an SSD-Lite object detector onto a mobile device.
+With 120 training epochs with 1000 iterations each, we achieved a mAP of 0.16 on this dataset and produced a TensorFlow Lite model that is compatible with Android and we used this model to implement an SSD-Lite object detector onto a mobile device.
 %We also built our own test small dataset to test the model with.\todo{should we include this? Doesnt look very good}
 %This dataset contains 459 images for each of the objects in $\mathbf{U}$ in different sizes and orientations and the objects used were the same objects that were used in the experiments. 
 %\todo{add mAPs we achived}
