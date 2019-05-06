@@ -13,6 +13,7 @@
 \begin{document}
 
 \title{ActiVis: Mobile Object Detection and Active Guidance for People with Visual Impairments}
+\titlerunning{Mobile Object Detection and Active Guidance}
 
 \author{Jacobus C. Lock\inst{1} \and
   Grzegorz Cielniak\inst{1} \and
@@ -117,44 +118,42 @@ In this work we do away with that somewhat naive assumption and implement a POMD
 
 \section{Human Controller}\label{sec:human-controller}
 
-The POMDP human control module that we implemented for this work is an extension to the MDP-based controller we made for the experiments described in~\cite{lock2019active}.
-It works by generating a trail of virtual waypoints for the user to point the camera towards.
-The waypoint positions are based on the model's pre-trained, internal knowledge on the inter-object spatial relationships and they are placed in a way that maximises the probability of the user pointing to and finding the target object
+The POMDP module that we implemented for this work is an extension to the MDP-based controller we made for the experiments described in~\cite{lock2019active}.
+It works by generating a trail of virtual waypoints for the user to point the camera towards that eventually leads tot he target object.
+The waypoint positions are based on the model's pre-trained internal knowledge on the inter-object spatial relationships and they are placed in a way that maximises the probability of the user pointing to and finding the target object.
 A new waypoint is generated when the user finds the current waypoint or finds another ancillary object.
-The design and implementation of this POMDP human controller is discussed here.
 
 \subsection{Design}
 
 A POMDP is an extension to the MDP model that allows it to handle cases where the state is not directly observable, allowing it to be used in more realistic scenarios. 
-In this case, the state is inferred based on the model parameters and the associated sensor accuracy (if a sensor is 100\% accurate, the state would be directly observable).
-The implication of this is that a POMDP-based agent does not know its state at any point in time.
-Instead, a POMDP model relies on a so-called belief meta-state that changes with additional observations to reflect the likelihood the agent is in any given state.
-The belief state is fully observable by the agent and can be used to infer the parent POMDP-agent's current state and generate the next action, hence the designation as an MDP.\@
+%In this case, the state is inferred based on the model parameters and the associated sensor accuracy (if a sensor is 100\% accurate, the state would be directly observable).
+The implication of this is that a POMDP-based agent does not know its state at any point in time, but must infer it based on the known model parameters and sensor accuracy, the object detector's accuracy in this case.
+This state inference relies on a so-called belief meta-state that is updated with additional observations to reflect the likelihood that the agent is in any given state.
+The belief state is fully observable by the agent and can be used to infer the mobile device's current state and generate the next action.
 
-The system uses an object detector and classifier in order to find any objects within the camera's view.
-These detectors and classifiers have some noise associated with them that is caused by misclassifications and similar errors and a POMDP is therefore necessary in this case.
-
-A POMDP model is represented by the $n$-tuple
+A POMDP model is represented by the $8$-tuple
 
 \begin{equation}
   (\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \mathbf{b}, \gamma),
 \end{equation}
 
-\noindent where $\mathbf{S}$ represents a finite set of discrete states, $\mathbf{A}$ is a set of discrete actions the agent can execute in any state, $\mathbf{T}$ is a matrix containing the probabilities of transitioning from state $s$ to state $s'$, $s, s' \in \mathbf{S}$ after executing action $a$, $a \in \mathbf{A}$ and $\mathbf{R}$ is the reward the agent receives for reaching state $s'$ after executing action $a$.
-$\mathbf{\Omega}$ is a set of possible state observations the agent can make, while the table $\mathbf{O}$ contains the probabilities of making state observation $\omega$, $\omega \in \mathbf{\Omega}$, when in state $s$ after executing action $a$.
-Finally, $\mathbf{b}$ is the belief vector containing the state probability distribution and the scalar $\gamma$ is a discount factor that prioritises long-term over short-term rewards and affects the model's convergence rate. 
-The belief state $\mathbf{b}$ is updated for every timestep and action-observation pair.
-This update is done with
+\noindent where $\mathbf{S}$ represents a finite set of discrete states, $\mathbf{A}$ is a set of discrete actions, $\mathbf{T}$ is a matrix containing the probabilities of transitioning from state $s$ to state $s'$, $s, s' \in \mathbf{S}$, after executing action $a$, $a \in \mathbf{A}$, and $\mathbf{R}$ is the reward the agent receives executing action $a$ and reaching state $s'$.
+$\mathbf{\Omega}$ is the set of possible state observations, while the matrix $\mathbf{O}$ contains the probabilities of making state observation $\omega$, $\omega \in \mathbf{\Omega}$, when in state $s$ after executing action $a$.
+Finally, $\mathbf{b}$ is the belief vector containing the state probability distribution and $\gamma$ is a discount factor that prioritises long-term over short-term rewards and affects the model's convergence rate. 
+$\mathbf{b}$ is updated for every timestep and action-observation pair.
+%This update is done with
 
-\begin{equation}
-  b_t(s') = \eta\Omega(o, s', a)\sum_{s\in\mathbf{S}}\mathbf{T}(s, a, s')b_{t-1}(s), 
-\end{equation}
-where $\eta$ is a normalisation factor. 
+%\begin{equation}
+  %b_t(s') = \eta\Omega(o, s', a)\sum_{s\in\mathbf{S}}\mathbf{T}(s, a, s')b_{t-1}(s), 
+%\end{equation}
+%where $\eta$ is a normalisation factor. 
 
-The state and space spaces and the reward and transition functions for this POMDP are the same as the MDP described in~\cite{lock2019active}. 
-The major difference is the addition of an observation matrix that defines the probability of being in any given state after making a new observation.
-In essence, it is a measure of the sensor accuracy, and in this case it describes the object detector's classification accuracy and recall.
-These parameters are given by the following. 
+%The state space, reward function and transition matrix are conceptually similar the same as the MDP described in~\cite{lock2019active}. 
+%The major difference is the addition of an observation matrix that defines the probability of being in any given state after making a new observation.
+%In essence, it is a measure of the sensor accuracy, and in this case it describes the object detector's classification accuracy and recall.
+%These parameters are given by the following. 
+
+Each of the POMDP's parameters are discussed next. 
 
 \subsubsection{State Space}
 
@@ -168,22 +167,22 @@ The state is given by
 
 \subsubsection{Actions}
 
-The possible actions an that define the area where the agent will generate the next waypoint are given by
+The possible actions that dictates the location the mobile device will generate the next waypoint are given by
 
 \begin{equation}
-  \mathbf{A} = \{ \textrm{UP, DOWN, LEFT, RIGHT} \}
+  \mathbf{A} = \{ \textrm{UP, DOWN, LEFT, RIGHT} \}.
 \end{equation}
 
 \subsubsection{Transitions}
 
-$\mathbf{T}$ was determined by extracting the inter-object spatial relationships for the objects of interest in terms of the actions in $\mathbf{A}$ from the OpenImages~\cite{openimages} dataset. 
-For example, by iterating over all of the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 16\% of images containing both objects. 
+$\mathbf{T}$ was determined by extracting the inter-object spatial relationships for a limited number of objects in terms of the actions in $\mathbf{A}$ from the OpenImages~\cite{openimages} dataset. 
+For example, by iterating over the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 16\% of images containing both objects (see Fig.~\ref{fig:openimage}). 
 The transition function for this case will look like 
 
 \begin{equation}
-  \mathbf{T}(s, a, s') = \mathbf{T}(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16.
+  t(s, a, s') = t(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16.
 \end{equation}
-An example of this relationship can be seen in the image in Fig.~\ref{fig:openimage}.
+%An image displaying this relationship can be seen in Fig.~\ref{fig:openimage}.
 
 \begin{figure}
   \centering
@@ -193,14 +192,14 @@ An example of this relationship can be seen in the image in Fig.~\ref{fig:openim
 
 \subsubsection{Reward Function}
 
-The reward function is designed to encourage the agent to find the target object by giving it a substantial reward for doing so, while penalising it for every action it takes that does not results in it finding the target object.
-Furthermore, additional penalties are given if the agent generates a waypoint in an area it has explored before $(v = \textrm{true}$) and when it exceeds some search length threshold, denoted by $n_{\max}$.
-All of the rewards and when they are given are summarised by Table~\ref{tab:rewards}.
+The reward function is designed to encourage the device controller to search for and find the target object by giving it a substantial reward for doing so, while penalising it for every action it takes that does not results in it finding the target object.
+Furthermore, additional penalties are given if the controller generates a waypoint in an area it has explored before $(v = \textrm{true}$) and when it exceeds some search length threshold denoted by $n_{\max}$.
+The rewards are given are summarised in Table~\ref{tab:rewards}.
 
-\begin{table}
+\begin{table}[h]
   \centering
   \caption{The reward function for the POMDP. }\label{tab:rewards}
-  \begin{tabular}{cc}
+  \begin{tabular}{p{3cm}p{1cm}}
     \toprule
     $r(o = o_{target})$ & 10000 \\ \midrule
     $r(v = \textrm{true})$  & -75 \\ \midrule
@@ -212,78 +211,83 @@ All of the rewards and when they are given are summarised by Table~\ref{tab:rewa
 
 \subsubsection{Observations and Observation Matrix}
 
-The observations the agent can make are identical to the states that the agent can enter. 
-In this case, however, the only uncertainty in the system is introduced by the object detector, since the model can perfectly track the number of steps taken during the search and the locations that waypoints have been generated.
+The observations the controller can make are identical to the states that the mobile device can enter. 
+In this case, however, uncertainty is introduced to the observation by the object detector.
+Previous search locations and search time is perfectly observable in this case, since these can be tracked by the mobile device.
 $\mathbf{\Omega}$ therefore only contains the classification/misclassification probabilities of the object detector. 
 These values were found by performing a set of classifier tests on the object detector and generating a confusion matrix to populate $\mathbf{\Omega}$.
 
 \subsubsection{Training}
 
-For our system, we encoded a total of 16 objects, including a `nothing' state where the detector does not see anything of interest, into the POMDP and object detector. These objects are given by $\mathbf{U}$, defined as 
+We encoded a total of 16 objects, including a `nothing' state where the detector does not see anything of interest, into the controller and object detector.
+These objects are given by $\mathbf{U}$, defined as 
 
 \begin{equation}
   \begin{split}
     \mathbf{U} = \{ nothing, monitor, keyboard, mouse, desk, laptop, mug, window,\\ 
-      lamp, backpack, chair, couch, plant, telephone, whiteboard, door \}
+      lamp, backpack, chair, couch, plant, telephone, whiteboard, door \}.
   \end{split}
 \end{equation}
 
 We also set $n_{\max}$ to 12 waypoints, after which the agent gets penalised for every additional waypoint it generates that does not lead to the target object. 
 This results in a total of 352 reachable states ($n_{states} = 16\times11\times2$), with any state containing the target object acting as a terminal state.
 
-The POMDP model is put through a training process to generate a policy that contains the optimal belief-action mapping that an agent can use to produce the optimal waypoint locations.
-This is done by having the agent explore the entire state-action-observation space and optimising the policy to maximise the long-term cumulative reward.
+The POMDP model is put through a training process to generate a policy that contains the optimal belief-action mapping that the controller can use to produce the optimal waypoint locations.
+This is done by having the model explore the entire state-action-observation space and optimising the policy to maximise its long-term cumulative reward.
 
-The difficulty of solving POMDPs is that the belief vector is a vector of continuous probability distributions with infinite combinations, making them very time-consuming or even impossible to solve exactly and we found this to be the case for our moderately-sized state space size and therefore opted to use an approximate method instead.
-Multiple algorithms that solve POMDPs approximately have been proposed~\cite{bargiacchi2016dynamic,kaelbling1998planning,silver2010monte,spaan2005perseus} and in this work we used the Point-Based Value Iteration (PBVI) algorithm~\cite{pineau2003point} as implemented in the AI-Toolbox library~\cite{aitoolbox} to solve the POMDP model.
+\todo{maybe remove references here}
+The difficulty of solving POMDPs is that $\mathbf{b}$ is a vector of continuous probability distributions with infinite combinations, making POMDPs time-consuming or even impossible to solve exactly.
+We found this to be the case for our moderately-sized state space size and therefore opted to use an approximate method instead.
+Multiple algorithms have been proposed~\cite{bargiacchi2016dynamic,kaelbling1998planning,silver2010monte,spaan2005perseus} and in this work we used the Point-Based Value Iteration (PBVI) algorithm~\cite{pineau2003point} as implemented in the AI-Toolbox library~\cite{aitoolbox} to solve the POMDP model.
 The PBVI algorithm speeds up the optimisation process by selecting a smaller subset of representative belief points from the belief function and tracking the values and derivatives of those points only. 
 Using the PBVI algorithm, we generated a total of 15 policies, one for each target object. 
 
-\subsection{Controller Implementation}
+\subsection{Guidance System Implementation}
 
-We made an Android app that implements the object detector and POMDP controller onto a mobile phone that can generate and provide guidance instructions for a user.  
-This was done by combining an audio interface that can provide non-visual guidance instructions, the POMDP controller and object detector onto a mobile app.
+We implemented the object detector and POMDP controller by combining it with an audio interface that provides non-visual guidance instructions onto an Android app.% that can be used by a PwVI by adding .% onto a mobile phone that can generate and provide guidance instructions for a user.  
+Non-visual feedback allows the app to be used by PwVI.
+%This was done by combining an audio interface that provides non-visual guidance instructions, the POMDP controller and object detector onto a mobile app.
 Each of these aspects and their implementation are discussed here.
 
 \subsubsection{Audio Interface}
 
-The target audience of our system are PwVI and we therefore have to provide guidance instructions in a non-visual manner that is intuitive and easy to understand. 
-To avoid blocking a user's access to the ambient sounds (something PwVI typically rely upon extensively), we use a set of non-intrusive bone-conducting headsets to transmit the audio signals to the user. 
+ActiVis's target audience are PwVI and we therefore have to provide guidance instructions in a non-visual manner that is intuitive and easy to understand. 
+To avoid blocking a user's access to ambient sounds (something PwVI typically rely upon), we use a set of non-intrusive bone-conducting headsets to transmit the audio signals to the user. 
 
-To describe the waypoints pan and tilt positions, we implemented an improved version of the interface described in~\cite{bellotto2013} that uses a spatialised audio signal.
-However, in this work we only spatialise the audio in the pan dimension only, since our headphones bypass the ear's pinnae that allow a person to determine the tilt angle of a sound source. 
-Instead we exploit a human's natural association of high and low sound sources with a high and low sound frequency respectively~\cite{blauert1997spatial} and adjust the sound source's pitch as a function of the waypoint's tilt angle. 
+To describe the waypoints' pan and tilt positions, we implemented an improved version of the interface described in~\cite{bellotto2013} that uses a spatialised audio signal.
+However, since our headphones bypass the ear's pinnae that allow a person to localise the height~\cite{roffler1968factors}, we spatialise the audio in the pan dimension only.
+To convey the tilt angle, we instead exploit a human's natural association of high and low sound sources with a high and low sound frequency respectively~\cite{blauert1997spatial} and adjust the sound source's pitch as a function of the waypoint's tilt angle. 
 A similar interface was used in~\cite{schauerte2012assistive}.
 With this interface and set of headphones, we are able to describe the location of a waypoint to a user in 2 dimensions (pan and tilt) in an intuitive an non-intrusive manner. 
 
 \subsubsection{Object Detector}
 
-The SSD-Lite network is a single-stage object detection network that is based on the SSD architecture, but uses MobileNetV2~\cite{sandler2018mobilenetv2} for its backbone.
-This leads to a more `lightweight' model that has less parameters and requires less memory to perform inference tasks, which makes it suitable for a mobile platform. 
+The SSD-Lite network is a single-stage object detection and classification network that is based on the SSD architecture that uses MobileNetV2~\cite{sandler2018mobilenetv2} for its backbone.
+This is a lightweight model that has less parameters and requires relatively little memory to perform inference tasks, which makes it suitable for mobile platforms. 
 This model achieves a mAPs of 0.22 with 4.3M parameters and 0.8B FLOPS~\cite{li2018tinydsod} on the COCO dataset~\cite{lin2014microsoft}. 
-When compared with the full SSD model, it achieves a slightly lower mAPs (0.25), but with significantly less parameters (34.3M) and FLOPS (34.36B).
-Tiny-DSOD~\cite{li2018tinydsod} is another object detection network focussed on mobile compatibility that is an alternative to the SSD-Lite network with similar accuracy and computing requirements(mAPs$=0.23$, parameters$=$1.15M, FLOPS$=$1.12B).
+The full SSD model on the other hand achieves a slightly higher mAPs (0.25), but with significantly more parameters (34.3M) and FLOPS (34.36B).
+Tiny-DSOD~\cite{li2018tinydsod} is a mobile alternative to SSD-Lite with similar accuracy and computing requirements(mAPs$=0.23$, parameters$=$1.15M, FLOPS$=$1.12B).
 However, we found that the SSD-Lite version produced better results in this application and we chose to implement it into our system.
 
-The network was trained with a maximum of 10000 annotated object samples for each object class in $\mathbf{A}$ with a 60\%/20\%/20\% split for training, validation and testing respectively.
-The images were taken from the OpenImages~\cite{openimages} dataset.
+The network was trained with a maximum of 10000 annotated object samples, taken from the OpenImages dataset~\cite{openimages}, for each object class in $\mathbf{A}$ with a 60\%/20\%/20\% split for training, validation and testing respectively.
 We set a relatively high confidence threshold of 0.7 to reduce the likelihood of false-positives.
 With 120 training epochs with 1000 iterations each, we achieved a mAPs of 0.16 on this dataset and produced a TensorFlow Lite model that is compatible with Android. 
 %We also built our own test small dataset to test the model with.\todo{should we include this? Doesnt look very good}
 %This dataset contains 459 images for each of the objects in $\mathbf{U}$ in different sizes and orientations and the objects used were the same objects that were used in the experiments. 
 %\todo{add mAPs we achived}
 
-\subsubsection{POMDP Controller}
+\subsubsection{Controller}
 
 The output from the POMDP model's training process is a policy file that defines the best location to place the next search waypoint based on the device's current state.
-This state is tracked by the device during run-time by recording the device's previous search locations and previous waypoint positions, which is done by disretising the world into a $6\times6$ grid and setting the relevant grid unit's $v$ value.
-Each grid square represents a \SI{35}{\degree} angular translation, encompassing a \SI{210}{\degree}$\times$\SI{210}{\degree} field of view. 
-This setup gives the state access to perfectly observable $n$ and $v$ parameters, while the observation parameter $o$ is generated by the object detector. 
+This state is tracked by the device throughout the app's runtime by performing object detection and recording the device's previous search locations and previous waypoint positions
+The latter is done by disretising the world into a $6\times6$ grid and setting the relevant grid unit's $v$ value.
+Each grid square represents a \SI{35}{\degree} angular translation and the grid encompasses a \SI{210}{\degree}$\times$\SI{210}{\degree} field of view. 
+This setup gives the state access to perfectly observable $n$ and $v$ parameters, while $o$ is generated by the object detector. 
 
-When the user moves the device into a new grid square by rotating the device past \SI{35}{\degree}, thereby making a new $v$ observation and changing the state, or observes a new object, the device triggers the controller to generate a new waypoint location.
-The controller uses the new state observation $\omega$ to update its belief state and queries the policy for the best location to place the new waypoint. 
-The policy output is an action from the action set $\mathbf{A}$ that specifies the next adjacent grid square to place the waypoint.
-For example, an `UP' output would result in the waypoint being placed one grid square, i.e. \SI{35}{\degree}, above where the current grid square within view. 
+When the device makes a new state observation, $\omega$, either because the user rotates the device past \SI{35}{\degree} and moves the device into a new grid square or sees a new object, the device triggers the controller to generate a new waypoint location.
+The controller uses the new $\omega$ to update $\mathbf{b}$ queries the policy for the best location to place the new waypoint. 
+The policy output is an action from the action set $\mathbf{A}$ that indicates the next adjacent grid square to place the waypoint.
+For example, an `UP' output would result in the waypoint being placed one grid square above the current grid square within view. 
 
 \section{Experiment Design}\label{sec:experiments}
 
