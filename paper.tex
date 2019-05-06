@@ -353,10 +353,32 @@ A picture of the unguided experiment environment is given in Fig.~\ref{fig:exper
 
 \section{Results}\label{sec:results}
 
+\subsection{Target Acquisition}
+
+The target acquisition rate (TAR) is the proportion of experiment runs where the participant successfully found the target object with each respective system. 
+For example, a TAR of 0.5 indicates that a participant found the target objects 50\% of searches. 
+We set an upper time limit for each object search run of 45 seconds.
+When this upper threshold was reached, the search was recorded as a failure and the next run was started. 
+
+We found that the unguided case produced a higher average TAR than the guided case (0.54 vs. 0.46), meaning that a participant was more around 8\% more likely to find more objects without our guidance than with it.
+However, the Kruskal-Wallis test for non-normal data shows that these sets of results are not statistically significantly different from one another ($p = 0.16$), meaning we are unable to conclude which approach produced better results. 
+The results are summarised in Table~\ref{tab:results}. 
+
+\begin{table}
+  \centering
+  \caption{A summary of the results. }\label{tab:results}
+  \begin{tabular}{ccccc}
+    \toprule
+     & avg & std & avg &std \\ \midrule
+    \bottomrule
+  \end{tabular}
+\end{table}
+
 \subsection{Time to Target}
 
+\todo{Should I add CDF?}
 The time it took a participant to find a target object is an important indicator of performance for the system, where less time indicates a shorter search time and increased performance.
-The data for the search times for each dataset are given in Fig~\ref{fig:boxplot-time}, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
+The data for the search times for each dataset are given in Fig~\ref{fig:boxplot-time}.%, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
 
 \begin{figure}
   \centering
@@ -364,15 +386,19 @@ The data for the search times for each dataset are given in Fig~\ref{fig:boxplot
   \caption{A set of boxplots comparing the time to target. }\label{fig:boxplot-time}
 \end{figure}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=0.7\textwidth]{figures/cumplot_time_to_target.png}
-  \caption{A set of CDFs comparing the time to target. }\label{fig:cum-time}
-\end{figure}
+%\begin{figure}
+  %\centering
+  %\includegraphics[width=0.7\textwidth]{figures/cumplot_time_to_target.png}
+  %\caption{A set of CDFs comparing the time to target. }\label{fig:cum-time}
+%\end{figure}
 
-By inspecting the boxplots in Fig.~\ref{fig:boxplot-time}, it can be seen that the guidance system reduced the time it took the participants to find the targets on average from 17.8s to 10s per target, ($p = 0.038$).
-This is an average improvement of almost 40\%.
-This is supported by the CDFs in Fig.~\ref{fig:cum-time} that show that \todo{Discuss the less number of objects found and how it is not statistically signioficatn. Perhaps show it in CDF}
+\todo{update numbers}
+%To compensate for the different numbers of targets found per participant and for each experiment setup, we average each participant's results, giving us 10 samples per experiment. 
+By inspecting the boxplots in Fig.~\ref{fig:boxplot-time}, it can be seen that the guidance system reduced the overall time it took the participants to find each target object.
+This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p=0.045$).
+These results are summarised in Table~\ref{tab:results}. 
+With this 27\% reduction in total time spent searching for a target object, we can conclude that a user benefits from using our smart guidance system, as opposed to relying on a simple object reader. 
+%This is supported by the CDFs in Fig.~\ref{fig:cum-time} that show that \todo{Discuss the less number of objects found and how it is not statistically signioficatn. Perhaps show it in CDF}
 
 \subsection{Movement}
 
@@ -380,7 +406,26 @@ To give an indication of the effort required to find each target, we look at the
 In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user, enhancing the user experience\todo{maybe cite paper that says less exertion is good}.
 
 The device displacement was both linear and angular in the $x, y, z, \phi$ (pan) and $\theta$ (tilt) dimensions.
-By integrating these data with respect to time, we can get the total displacement for each dimension.
+By integrating these data we can obtain and compare the total absolute displacement for each dimension.
+The angle and distance results are plotted in the boxplots in Figs.~\ref{fig:boxplot-angle} and~\ref{fig:boxplot-dist} respectively. 
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/boxplot_angle.png}
+  \caption{A set of boxplots comparing the angular distance the device travelled for each experiment. }\label{fig:boxplot-angle}
+\end{figure}
+
+\begin{figure}
+  \centering
+  \includegraphics[width=0.7\textwidth]{figures/boxplot_dist.png}
+  \caption{A set of boxplots comparing the distance the device travelled for each experiment. }\label{fig:boxplot-dist}
+\end{figure}
+
+The boxplots for the total angle displacement show a consistent reduction in radians for the guided case for both the pan (\SI{0.68}{\radian} vs. \SI{0.99}{\radian}, $p=0.029$) and tilt dimensions (\SI{0.68}{\radian} vs. \SI{1.05}{\radian}, $p=0.011$). 
+The guidance system therefore reduces the total angular displacement to find the objects by 31\% and 35\% for the pan and tilt dimensions respectively. 
+The total linear displacement is also reduced when using the guidance interface by approximately 36\% (\SI{0.23}{\metre} vs. \SI{0.36}{\metre}, $p=0.012$).
+These results are summarised in Table~\ref{tab:results}.
+To conclude, the data show that the guidance interface reduced the total angular and linear displacement required to find the target objects in all dimensions by at least 31\%, reducing the total effort required by the user. 
 
 \section{Conclusion}\label{sec:conclusion}
 
