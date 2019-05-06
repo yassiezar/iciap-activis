@@ -28,11 +28,11 @@
 \maketitle
 
 \begin{abstract}
-  The ActiVis project aims to deliver a system for a mobile device that is able to guide a person with visual impairments towards a target object or area in an unknown indoor environment. 
-  To do so, it uses new developments in object detection methods, mobile computing, action generation and human-computer interfacing to interpret the user's surroundings and present useful guidance directions.
-  Our approach to action generation used a Markov Decision Process (MDP) to track the system's state and output the next best location to investigate to find a target object and has been shown to work in principle in~\cite{lock2019active}.
-  This work expands upon that by adding an object detector and adapting the decision-making process accordingly, providing a complete object search and guidance pipeline.
-  The improved ActiVis system was evaluated in a set of experiments and it outperformed the baseline, unguided case.
+  The ActiVis project aims to deliver a mobile system that is able to guide a person with visual impairments towards a target object or area in an unknown indoor environment. 
+  For this, it uses new developments in object detection, mobile computing, action generation and human-computer interfacing to interpret the user's surroundings and present effective guidance directions.
+  Our approach to direction generation uses a Markov Decision Process to track the system's state and output the optimal location to investigate and has been shown to work~\cite{lock2019active}.
+  This work adds an object detector and adapts the guidance process accordingly to provide a complete object search and guidance pipeline.
+  The improved ActiVis system was evaluated in a set of experiments and outperforms the baseline, unguided case.
   \keywords{Active vision, vision impairment, object detection}
 \end{abstract}
 
@@ -60,7 +60,7 @@ This work makes the following contributions:
   \item experiments that evaluate the efficacy of the proposed system.
 \end{itemize}
 
-Section~\ref{sec:previous-work} discusses relevant previous work, followed by a description of the active vision system and human controller in Sections~\ref{sec:active-vision} and~\ref{sec:human-controller} respectively. 
+Section~\ref{sec:previous-work} discusses relevant previous work, followed by a description of the active vision system and controller in Section~\ref{sec:active-vision}.
 The experiments that were conducted in this work and their results are discussed in Sections~\ref{sec:experiments} and~\ref{sec:results}, followed finally by a short conclusion and discussion of the next steps for the project in Section~\ref{sec:conclusion}.
 
 \section{Previous Work}\label{sec:previous-work}
@@ -106,21 +106,24 @@ This diagram shows a typical feedback control loop that generates a control sign
   \caption{The system control loop including a human and the controller.}\label{fig:sys-diagram}
 \end{figure}
 
-In this case, the error, $e$, is defined as the difference between the desired object and the object currently within view. 
-The implication of adding a human into the loop is that an additional block, \emph{H}, is added to simulate a human that receives an control signal, \emph{u}, from the controller, \emph{K}. 
-However, the challenge with people is that a person may interpret \emph{u} in any unpredictable way (i.e.\ apply a transformation) that results in the signal \emph{u*} that points the camera, \emph{P}, to a new location containing a new object observation, \emph{y}.
+%The error, $e$, is defined as the difference between the desired object and the object currently within view. 
+Adding a human into the loop adds an additional block, \emph{H}, representing a human that receives an control signal, \emph{u}, from the controller, \emph{K}. 
+However, the challenge is that a person may interpret \emph{u} in any unpredictable way that results in the signal \emph{u*} that points the camera, \emph{P}, to a new location containing a new object observation, \emph{y}.
 It is therefore important to design \emph{K} to be robust enough to accommodate different user habits and limitations and ensure that \emph{u*} tracks \emph{u} as closely as possible. 
-%These design considerations are addressed in previous work. \todo{how to state that we designed the interface already if its unpublished?}
+The object detector's classification errors, \emph{n}, is added to the feedback loop as a noise signal and affects \emph{K}'s output.
 
-Another fact to take note of is the measurement noise, \emph{n}, added in the feedback loop that simulates an object detector's classification errors that influence the action that \emph{K} generates. 
-In our previous work, we assumed a perfect classifier and solved the problem using a Markov decision process (MDP). 
-In this work we do away with that somewhat naive assumption and implement a POMDP that can handle classification uncertainties in object detectors and classifiers. 
-
-\section{Human Controller}\label{sec:human-controller}
-
-The POMDP controller that we implemented for this work is an extension to the MDP-based controller we made for the experiments described in~\cite{lock2019active}.
-It works by generating a trail of virtual waypoints for the user to point the camera towards that eventually leads to the target object.
+In our previous work~cite{lock2019active}, we assumed a perfect classifier and solved the problem using a Markov decision process (MDP). 
+In this work we do away with that somewhat naive assumption and extend the MDP and implement a POMDP-based controller that can handle classification uncertainties in object detectors and classifiers. 
+%The POMDP controller that we implemented for this work is an extension to the MDP-based controller we made for the experiments described in~\cite{lock2019active}.
+This controller works by generating a trail of virtual waypoints for the user to point the camera towards that eventually leads to the target object.
 The waypoint positions are based on the model's pre-trained internal knowledge of the inter-object spatial relationships and they are placed in a way that maximises the probability of the user finding the target object.
+The design and implementation of this controller are discussed next.
+
+%\section{Human Controller}\label{sec:human-controller}
+
+%The POMDP controller that we implemented for this work is an extension to the MDP-based controller we made for the experiments described in~\cite{lock2019active}.
+%It works by generating a trail of virtual waypoints for the user to point the camera towards that eventually leads to the target object.
+%The waypoint positions are based on the model's pre-trained internal knowledge of the inter-object spatial relationships and they are placed in a way that maximises the probability of the user finding the target object.
 %A new waypoint is generated when the user finds the current waypoint or finds another ancillary object.
 
 \subsection{Design}
@@ -247,7 +250,7 @@ SSD-Lite is a single-stage object detection and classification network that is b
 This is a lightweight model that requires relatively little memory to perform inference tasks, making it suitable for mobile platforms. 
 This model achieves a mAPs of 0.22 with 4.3M parameters and 0.8B FLOPS~\cite{li2018tinydsod} on the COCO dataset~\cite{lin2014microsoft}. 
 The full SSD model achieves a slightly higher mAPs (0.25), but with significantly more parameters (34.3M) and FLOPS (34.36B).
-Tiny-DSOD~\cite{li2018tinydsod}, an alternative to SSD-Lite, has similar precision and computing requirements (mAPs=0.23, parameters=1.15M, FLOPS=1.12B), but we found that SSD-Lite produced better results for this application and chose to implement it in ActiVis.
+%Tiny-DSOD~\cite{li2018tinydsod}, an alternative to SSD-Lite, has similar precision and computing requirements (mAPs=0.23, parameters=1.15M, FLOPS=1.12B), but we found that SSD-Lite produced better results for this application and chose to implement it in ActiVis.
 
 The network was trained with a maximum of 10000 object samples, taken from the OpenImages dataset~\cite{openimages}, for each object class in $\mathbf{U}$ with a 60\%/20\%/20\% split for training, validation and testing respectively.
 We set a relatively high confidence threshold of 0.7 to reduce the likelihood of false-positives.
@@ -384,9 +387,9 @@ All the experiment results are summarised in Table~\ref{tab:results}.
 The time it takes to find a target object is an important indicator of system performance, where less time indicates a shorter search time and increased performance.
 The data for the search times for each experiment are shown in Fig.~\ref{fig:boxplot-time}.%, while Fig.~\ref{fig:cum-time} shows the cumulative distribution functions (CDF) for the search times as a function of the total number of objects found.
 
-\begin{figure}[h]
+\begin{figure}
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/boxplot_time_to_target.png}
+  \includegraphics[width=0.6\textwidth]{figures/boxplot_time_to_target.png}
   \caption{A set of boxplots comparing the time to target for each experiment. }\label{fig:boxplot-time}
 \end{figure}
 
@@ -425,7 +428,7 @@ These results are plotted in Fig.~\ref{fig:boxplot-displacement}.
   %\caption{A set of boxplots comparing the distance the device travelled for each experiment. }\label{fig:boxplot-dist}
 %\end{figure}
 
-\begin{figure}[h]
+\begin{figure}
   \centering
   \includegraphics[width=0.8\textwidth]{figures/boxplot_displacement.png}
   \caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment. }\label{fig:boxplot-displacement}
