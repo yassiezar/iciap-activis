@@ -1,0 +1,55 @@
+Meta Review:
+
+
+1. Summary of final decision.
+
+    Both reviewers appreciated the technical approach described in the paper and the paper organization and clarity. While respecting the reviewers' positive assessment, I will note that this approach, while technically sound, is unlike to produce a usable or useful system for blind users. The task considered (find an object with guidance from the system) requires prior knowledge that is not normally available. The time to discovery is a function of the user interface: if, rather than having to tap the phone to get feedback in the unguided case, the phone would continuously report the objects it found, it is likely that the time to discovery would be much shorter. It is also lamentable that blind subjects were not considered for the user study.
+
+
+
+R1:
+
+Questions
+
+    1. Summary. In 3-5 sentences, describe the key ideas and experiments and their significance.
+        This paper presents an mobile active guidance system for blind people, which is based on object detection and POMDP. The main contribution is the modeling of system pipeline, which includes the human into the loop and takes into the account for the error affecting the object detector.
+    2. Strengths. Consider the significance of key ideas, experimental validation, writing quality. Explain clearly why these aspects of the paper are valuable.
+        The main stengths of this approach is to relax the assumption that an object detector is foolproof. Indeed, the introduction of POMDP into the pipeline allows to model some degree of uncertainity on the current state, so taking into account for potential mistakes of the object detector. The experiments are thorough and well discussed. Indeed, the statistical significance of results has been also took into account. The number of persons involved into the experiments is a bit limited, but it is sufficient for a preliminary assessment.
+    3. Weaknesses. Consider significance of key ideas, experiments, writing quality. Clearly explain why these are weak aspects of the paper, e.g. why a specific prior work has already demonstrated the key contributions, or why the experiments are insufficient to validate the claims.
+        My only concern is about the set of objects considered in two experiments u_guided and u_unguided. Why they are different. It could be interesting to explicitly clarify the reason, if there is one.
+        In page 6 there is a typo, that is "disretising".
+    4. Paper rating
+        Weak Accept
+    5. Justification of rating. What are the most important factors in your rating?
+        The paper is well organized. Both the description of the system and the experiments are convincing. Even different modules implementing the system come from literature, I think the overall pipeline is a contribution sufficiently novel to motivate the publication of this paper. Indeed, this represents a step further to move this app out of a lab to a real world application.
+
+R2:
+
+Questions
+
+    1. Summary. In 3-5 sentences, describe the key ideas and experiments and their significance.
+        The paper presents an extension of a mobile system devised to guide a person with visual impairments towards a target object.
+        The guidance system uses an object detector to scan the environment for objects and a partially observable Markov Decision Process-based controller to generate and present the user with guidance instructions through an audio interface.
+    2. Strengths. Consider the significance of key ideas, experimental validation, writing quality. Explain clearly why these aspects of the paper are valuable.
+        The contribution enhances a previous version of the system, providing a complete object detection and guidance pipeline.
+        Experimental validation is well settled.
+        Writing quality is overall good.
+    3. Weaknesses. Consider significance of key ideas, experiments, writing quality. Clearly explain why these are weak aspects of the paper, e.g. why a specific prior work has already demonstrated the key contributions, or why the experiments are insufficient to validate the claims.
+        Being the result of an evolving system developed during a project, it would be interesting to see, through comparisons, the achieved improvement.
+
+        Suggestions:
+        #- Please, clarify what r is in Fig. 2;
+        - Please, provide more insight on the choice of parameter values (e.g., for Table 1), eventually also comparing them with values used in the previous version of the system;
+        - Could you somehow compare the performance to that of the previous version of the system?
+
+        Few typos:
+        #- Page 2 (bottom): “but the there is significant lag”;
+        - Page 3 (top): “single-stage models that … and checks”;
+        - Fig. 5: “Anglular”;
+        #- Page 10 (bottom): “these experiment”.
+    4. Paper rating
+        Accept
+    5. Justification of rating. What are the most important factors in your rating?
+        See point 2 above.
+
+
