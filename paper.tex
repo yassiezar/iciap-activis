@@ -85,7 +85,7 @@ On the other hand, single-stage models, such as SSD and MobileNet~\cite{liu2016s
 
 A complete system diagram for Activis is given in Fig.~\ref{fig:sys-diagram}. 
 This diagram shows a typical feedback control loop that generates a control signal to minimise some error signal, \emph{e}, and drive the output to some reference, $r$, but has been modified to incorporate a human within the loop.
-$r$ in this case is a camera image containing the target object. 
+$r$ in this case is the target object. 
 
 \begin{figure}
   \centering
@@ -99,7 +99,7 @@ It is therefore important to design \emph{K} to be robust enough to accommodate 
 The object detector's classification errors, \emph{n}, is added to the feedback loop as a noise signal and affects \emph{K}'s output.
 
 In our previous work~\cite{lock2019active}, we assumed a perfect classifier and solved the problem using a Markov decision process (MDP). 
-In this work we do away with that somewhat naive assumption and extend the MDP and implement a POMDP-based controller that can handle classification uncertainties in object detectors and classifiers. 
+In this work we do away with that somewhat naive assumption and replace the MDP controller with a POMDP-based controller that can handle classification uncertainties in object detectors and classifiers. 
 This controller works by generating a trail of virtual waypoints for the user to point the camera towards that eventually leads to the target object.
 The waypoint positions are based on the model's pre-trained internal knowledge of the inter-object spatial relationships and they are placed in a way that maximises the probability of the user finding the target object.
 The design and implementation of this controller are discussed next.
@@ -107,7 +107,6 @@ The design and implementation of this controller are discussed next.
 \subsection{Controller Design}
 
 A POMDP is an extension to the MDP model that allows it to handle cases where the state is not directly observable, allowing it to be used in more realistic scenarios. 
-%In this case, the state is inferred based on the model parameters and the associated sensor accuracy (if a sensor is 100\% accurate, the state would be directly observable).
 The implication of this is that a POMDP-based agent does not know its state at any point in time, but must infer it based on the known model parameters and sensor accuracy, which is the object detector's accuracy in this case.
 This state inference relies on a so-called belief meta-state that is updated with additional observations to reflect the likelihood that the agent is in any given state.
 The belief state is fully observable by the agent and can be used to infer the mobile device's current state and generate the next action.
@@ -159,7 +158,7 @@ These values were found by performing a set of classifier tests on the object de
 \subsubsection{Training}
 
 We encoded 16 objects, including a `nothing' object where the detector does not see anything of interest, into the controller and object detector.
-These objects are defined as 
+These objects given by 
 
 \begin{equation*}
   \begin{split}
@@ -258,12 +257,12 @@ All the experiment results are summarised in Table~\ref{tab:results}.
   \caption{A summary of the experiment results. }\label{tab:results}
   \begin{tabular}{p{5cm}p{2cm}p{2cm}p{2.5cm}}
     \toprule
-    & \textbf{Guided} & \textbf{Unguided}  & \textbf{KW Statistic} \\\midrule
-    TAR [\%]           & $46\pm13$ & $54\pm15$ &  0.16 \\\midrule
-    Time to target [s] & $12.5\pm11.9$ & $17.2\pm11.5$ & 0.045 \\\midrule
-    Pan Angle Displacement [rad] & $0.68\pm1.1$ & $0.99\pm1.2$ & 0.029 \\\midrule
-    Tilt Angle Displacement [rad] & $0.68\pm1.1$ & $1.04\pm1.2$ & 0.011 \\\midrule
-    Linear Displacement [rad] & $0.23\pm0.22$ & $0.36\pm0.22$ & 0.012 \\\midrule
+    & \textbf{Guided}             & \textbf{Unguided} & \textbf{KW Statistic} \\\midrule
+    TAR [\%]                      & $46\pm13$         & $54\pm15$     &  0.16 \\\midrule
+    Time to target [s]            & $12.5\pm11.9$     & $17.2\pm11.5$ & 0.045 \\\midrule
+    Pan Angle Displacement [rad]  & $0.68\pm1.1$      & $0.99\pm1.2$  & 0.029 \\\midrule
+    Tilt Angle Displacement [rad] & $0.68\pm1.1$      & $1.04\pm1.2$  & 0.011 \\\midrule
+    Linear Displacement [rad]     & $0.23\pm0.22$     & $0.36\pm0.22$ & 0.012 \\\midrule
     \bottomrule
   \end{tabular}
 \end{table}
