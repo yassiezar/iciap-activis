@@ -74,8 +74,8 @@ The issue with a marker-based approach is that it requires significant effort to
 However, both of these methods use passive guidance approaches that rely on the user placing the desired marker/object within the camera's view by themselves before any guidance is provided. 
 VizWiz~\cite{bigham2010vizwiz} can leverage a human's understanding of the environment to guide a user to the correct location, but there is significant lag and a reliance on a good internet connection and remote worker being available. 
 Previous work on the ActiVis system~\cite{lock2019active} addressed the passive guidance issue by implementing an MDP-based controller that gives the user pointing instructions to find an out-of-view object and showed that this is a viable method of object search. 
-However, this work used encoded barcodes to simulate real objects.
-In this work, we are replacing the barcodes with real objects, thereby providing a complete object detection and guidance pipeline. 
+However, that work moved to establish that an MDP-based controller is indeed a viable to generate guidance instructions and reduced variability by using encoded barcodes to simulate real objects and on-screen prompts to present the guidance instructions.
+In this work, we are expanding the control model and replacing the barcodes with real objects and providing audio guidance, thereby providing a complete object detection and guidance pipeline for people with vision impairments.  
 
 Object detectors mainly come in 2 flavours: 2-stage models that use an external algorithm to select regions of interest to perform object inference on~\cite{ren2015faster}, and single-stage models that generate multiple, differently-sized windows and checks each window for any objects.
 Between the 2 types, there is a speed-accuracy trade-off, where 2-stage models typically produce more accurate results, but are slower and require more computing resources~\cite{liu2018deeplf}.
@@ -301,6 +301,8 @@ The guidance system therefore reduces the total angular displacement to find the
 The total linear displacement is also reduced when using the guidance interface by approximately 36\% (\SI{0.23}{\metre} vs. \SI{0.36}{\metre}, $p_{kw}=0.012$).
 These results are summarised in Table~\ref{tab:results}.
 To conclude, the data show that the guidance interface reduced the total angular and linear displacement required to find the target objects in all dimensions by at least 31\%, reducing the total effort required by the user. 
+
+\todo{How to relate the VISAPP work to these results? The experiments are different, so the data aren't directly comparable.}
 
 \section{Conclusion}\label{sec:conclusion}
 

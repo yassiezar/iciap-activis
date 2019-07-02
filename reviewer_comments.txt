@@ -45,7 +45,7 @@ Questions
         Few typos:
         #- Page 2 (bottom): “but the there is significant lag”;
         - Page 3 (top): “single-stage models that … and checks”;
-        - Fig. 5: “Anglular”;
+        #- Fig. 5: “Anglular”;
         #- Page 10 (bottom): “these experiment”.
     4. Paper rating
         Accept
