@@ -5,10 +5,7 @@
 \usepackage{amsmath}
 \usepackage{siunitx}
 
-% Package for todo command
-\usepackage{xcolor}
-
-\newcommand\todo[1]{\textcolor{red}{#1}}
+\usepackage{todonotes}
 
 \begin{document}
 
@@ -134,17 +131,18 @@ The transition function for this case is $t(s, a, s') = t(\textrm{keyboard}, \te
 
 The reward function encourages the device controller to search for and find the target object by giving it a substantial reward for doing so, while penalising it for every action that does not result in it finding the target object.
 Furthermore, additional penalties are given if the controller generates a waypoint in an area it has explored before $(v = \textrm{true}$) or when it exceeds some search length threshold denoted by $n_{\max}$.
-The rewards are summarised in Table~\ref{tab:rewards}.
+The reward values were selected based on lessons learned during the implementation of the MDP model and the rewards for both that and this work are summarised in Table~\ref{tab:rewards}.
 
 \begin{table}
   \centering
   \caption{The reward function for the POMDP. }\label{tab:rewards}
-  \begin{tabular}{p{3cm}p{1cm}}
+  \begin{tabular}{p{3cm}p{2cm}p{2cm}}
     \toprule
-    $r(o = o_{target})$ & 10000 \\ \midrule
-    $r(v = \textrm{true})$  & -75 \\ \midrule
-    $r(n > n_{\max})$ & -75 \\ \midrule
-    otherwise $r(\cdot)$ & -100  \\ \midrule
+    Reward condition        & POMDP  & MDP   \\ \midrule
+    $r(o = o_{target})$     & 10000  & 10000 \\ 
+    $r(v = \textrm{true})$  & -75    & -10   \\
+    $r(n > n_{\max})$       & -75    & -10   \\
+    otherwise $r(\cdot)$    & -100   & -1    \\
     \bottomrule
   \end{tabular}
 \end{table}
@@ -303,6 +301,7 @@ These results are summarised in Table~\ref{tab:results}.
 To conclude, the data show that the guidance interface reduced the total angular and linear displacement required to find the target objects in all dimensions by at least 31\%, reducing the total effort required by the user. 
 
 \todo{How to relate the VISAPP work to these results? The experiments are different, so the data aren't directly comparable.}
+\todo{Make sure paper fits into 10+1 page limit for content and references}
 
 \section{Conclusion}\label{sec:conclusion}
 
