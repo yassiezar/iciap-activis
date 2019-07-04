@@ -7,6 +7,9 @@
 
 \usepackage{todonotes}
 
+\usepackage{soul}
+\DeclareRobustCommand{\tofix}[1]{{\sethlcolor{yellow}\hl{[#1]}}}
+
 \begin{document}
 
 \title{ActiVis: Mobile Object Detection and Active Guidance for People with Visual Impairments}
@@ -18,8 +21,8 @@
   N. Bellotto\inst{1}
 }
 \authorrunning{Jacobus C. Lock et. al.}
-\institute{University of Lincoln, Lincoln, UK \and
-  Universit\`{a} degli studi di Padova, Italy
+\institute{School of Computer Science, University of Lincoln, United Kingdom \and
+ Department of Information Engineering, University of Padova, Italy
 }
 
 \maketitle
@@ -37,14 +40,15 @@
 
 There are an estimated half a billion people that live with mild to severe vision impairment or total blindness and this number is expected to significantly rise with an ageing population~\cite{bourne2017magnitude}.
 There has been a rise interest from industrial partners in utilising modern technology to make their products more accessible and improvements in modern computing power and image processing capabilities have made this easier.
-This work is part of the ActiVis\footnote{lcas.github.io/ActiVis} project that aims to enable people with vision impairments (PwVI) to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera.
+This work is part of the ActiVis\footnote{http://lcas.github.io/ActiVis} project that aims to enable people with vision impairments to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera.
 This system implements active vision ideas~\cite{bajcsy2017}, but replaces the electro-mechanical servo typically found in active vision systems with a user's arm and hand as pictured in Fig.~\ref{fig:system-in-use}.
 This project expands upon concepts proposed in~\cite{bellotto2013,lock2017portable} and builds off of the system introduced in~\cite{lock2019active}.
 
 \begin{figure}
   \centering
-  \includegraphics[width=0.5\textwidth]{figures/system_use.png}
-  \caption{The system in use during an experiment with a blindfolded participant. }\label{fig:system-in-use}
+  \includegraphics[width=0.45\textwidth]{figures/system_use.png} \hfil
+  \includegraphics[width=0.45\textwidth]{figures/system_use.png}
+  \caption{The system in use during an experiment with a blindfolded participant. \tofix{can you add another image with (most of) the objects? maybe arranged in a grid} }\label{fig:system-in-use}
 \end{figure}
 
 ActiVis uses the camera's current and previous image data as input and leverages its understanding of inter-object spatial relationships to determine the best navigation action to take to find the target object.
@@ -82,9 +86,9 @@ On the other hand, single-stage models, such as SSD and MobileNet~\cite{liu2016s
 
 A complete system diagram for Activis is given in Fig.~\ref{fig:sys-diagram}. 
 This diagram shows a typical feedback control loop that generates a control signal to minimise some error signal, \emph{e}, and drive the output to some reference, $r$, but has been modified to incorporate a human within the loop.
-$r$ in this case is the target object. 
+In this case, $r$ is the target object. 
 
-\begin{figure}
+\begin{figure}[t]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/control_loop.png}
   \caption{The system control loop including a human and the controller.}\label{fig:sys-diagram}
@@ -123,10 +127,11 @@ $\mathbf{T}$ was determined by extracting the inter-object spatial relationships
 For example, by iterating over the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 16\% of images containing both objects (see Fig.~\ref{fig:openimage}). 
 The transition function for this case is $t(s, a, s') = t(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16$.
 
-\begin{figure}
+\begin{figure}[t]
   \centering
-  \includegraphics[width=0.4\columnwidth]{figures/desk_example.png}
-  \caption{An example from of an image from the OpenImage dataset~\cite{openimages} containing typical office objects}\label{fig:openimage}
+  \includegraphics[width=0.45\columnwidth]{figures/desk_example.png} \hfil
+  \includegraphics[width=0.45\columnwidth]{figures/desk_example.png}
+  \caption{An example from of an image from the OpenImage dataset~\cite{openimages} containing typical office objects. \tofix{add one more image, different from VISAPP though}}\label{fig:openimage}
 \end{figure}
 
 The reward function encourages the device controller to search for and find the target object by giving it a substantial reward for doing so, while penalising it for every action that does not result in it finding the target object.
@@ -155,9 +160,7 @@ These values were found by performing a set of classifier tests on the object de
 
 \subsubsection{Training}
 
-We encoded 16 objects, including a `nothing' object where the detector does not see anything of interest, into the controller and object detector.
-These objects given by 
-
+We encoded 16 objects, including a `nothing' object where the detector does not see anything of interest, into the controller and object detector:
 \begin{equation*}
   \begin{split}
     \mathbf{U} = \{ nothing, monitor, keyboard, mouse, desk, laptop, mug, window,\\ 
@@ -270,7 +273,7 @@ All the experiment results are summarised in Table~\ref{tab:results}.
 The time it takes to find a target object is an important indicator of system performance, where less time indicates a shorter search time and increased performance.
 The data for the search times for each experiment are shown in Fig.~\ref{fig:boxplot-time}.
 
-\begin{figure}
+\begin{figure}[t]
   \centering
   \includegraphics[width=0.7\textwidth]{figures/boxplot_time_to_target.png}
   \caption{A set of boxplots comparing the time to target for each experiment. }\label{fig:boxplot-time}
@@ -291,10 +294,10 @@ The device displacement was measured in both linear ($x, y, z$) and angular (pan
 Integrating these data, we obtain the total absolute displacement in each dimension.
 These results are plotted in Fig.~\ref{fig:boxplot-displacement}.
 
-\begin{figure}
+\begin{figure}[t]
   \centering
   \includegraphics[width=0.8\textwidth]{figures/boxplot_displacement.png}
-  \caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment. }\label{fig:boxplot-displacement}
+  \caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment.\tofix{Half the height of the image. You can also put it together with Fig.~4 to save space.}}\label{fig:boxplot-displacement}
 \end{figure}
 
 The boxplots for the total angle displacement show a consistent reduction in radians for the guided case for both the pan (\SI{0.68}{\radian} vs. \SI{0.99}{\radian}, $p_{kw}=0.029$) and tilt dimensions (\SI{0.68}{\radian} vs. \SI{1.05}{\radian}, $p_{kw}=0.011$). 
@@ -313,7 +316,7 @@ The key results from these experiments are that the guidance system improved the
 However, the participants were able to find 8\% more objects on average in the unguided case, but this result was found to be statistically insignificant. 
 With these results, we can reasonably conclude that our system enables a blind or blindfolded user to find a target object and does so better than the alternative base case.
 
-The next steps for the project are to refine and expand the object detector to include objects from other environments. 
+The next steps for the project are to refine and expand the object detector to include objects from other environments. \tofix{that's it? a little bit more imagination... what about user- adaptation? different interface, maybe with different audio, voice, vibration etc.? evaluation with larger pool of VI participants? It doesn't mean you have to do it, but it gives ideas for future improvements and research projects.}
 
 \bibliographystyle{splncs04}
 \bibliography{bib}
