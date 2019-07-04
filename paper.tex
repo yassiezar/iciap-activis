@@ -30,19 +30,19 @@
 \begin{abstract}
   The ActiVis project aims to deliver a mobile system that is able to guide a person with visual impairments towards a target object or area in an unknown indoor environment. 
   For this, it uses new developments in object detection, mobile computing, action generation and human-computer interfacing to interpret the user's surroundings and present effective guidance directions.
-  Our approach to direction generation uses a Markov Decision Process to track the system's state and output the optimal location to investigate and has been shown to work~\cite{lock2019active}.
-  This work adds an object detector and adapts the guidance process accordingly to provide a complete object search and guidance pipeline.
-  The improved ActiVis system was evaluated in a set of experiments and outperforms the baseline, unguided case.
+  Our approach to direction generation uses a Markov Decision Process to track the system's state and output the optimal location to be investigated.
+  This system includes an object detector and an audio-based guidance interface to provide a complete active search pipeline.
+  The ActiVis system was evaluated in a set of experiments showing better performance than a simpler unguided case.
   \keywords{Active vision, vision impairment, object detection}
 \end{abstract}
 
 \section{Introduction}
 
 There are an estimated half a billion people that live with mild to severe vision impairment or total blindness and this number is expected to significantly rise with an ageing population~\cite{bourne2017magnitude}.
-There has been a rise interest from industrial partners in utilising modern technology to make their products more accessible and improvements in modern computing power and image processing capabilities have made this easier.
-This work is part of the ActiVis\footnote{http://lcas.github.io/ActiVis} project that aims to enable people with vision impairments to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera.
-This system implements active vision ideas~\cite{bajcsy2017}, but replaces the electro-mechanical servo typically found in active vision systems with a user's arm and hand as pictured in Fig.~\ref{fig:system-in-use}.
-This project expands upon concepts proposed in~\cite{bellotto2013,lock2017portable} and builds off of the system introduced in~\cite{lock2019active}.
+There has been a rise interest from industrial partners in utilising modern technology to make their products more accessible, and improvements in modern computing power and image processing capabilities have made this easier.
+This work is part of the ActiVis\footnote{http://lcas.github.io/ActiVis} project, which aims to enable people with vision impairments to independently navigate and find objects within an unknown indoor environment using only a mobile phone and its camera.
+Our solution is inspired by active vision research~\cite{bajcsy2017}, but it replaces the electro-mechanical servo typically found in active vision systems with a user's arm and hand, as pictured in Fig.~\ref{fig:system-in-use}.
+This paper expands upon concepts proposed in~\cite{bellotto2013,lock2017portable} and extends the concept presented in~\cite{lock2019active} with a fully working system.
 
 \begin{figure}
   \centering
@@ -51,13 +51,13 @@ This project expands upon concepts proposed in~\cite{bellotto2013,lock2017portab
   \caption{The system in use during an experiment with a blindfolded participant. \tofix{can you add another image with (most of) the objects? maybe arranged in a grid} }\label{fig:system-in-use}
 \end{figure}
 
-ActiVis uses the camera's current and previous image data as input and leverages its understanding of inter-object spatial relationships to determine the best navigation action to take to find the target object.
-For this, we expanded upon our previous work and implemented a partially observable Markov Decision Process (POMDP) on a mobile phone that generates real-time navigation instructions for the user.
-This work makes the following contributions:
+ActiVis uses the camera's current and previous image data as input and leverages its understanding of inter-object spatial relationships to determine the best navigation action to find the target object.
+For this, we expanded upon our previous work and implemented a Partially Observable Markov Decision Process (POMDP) on a mobile phone that generates real-time navigation instructions for the user.
+The current paper includes the following main contributions:
 
 \begin{itemize}
-  \item a controller that enables object search and guidance on a mobile phone;
-  \item a complete system pipeline that includes interfacing, object detection and human control;
+  \item a new controller that enables object search and guidance on a mobile phone;
+  \item a complete system pipeline that includes audio interface, object detection and human control;
   \item experiments that evaluate the efficacy of the proposed system.
 \end{itemize}
 
@@ -175,7 +175,7 @@ The POMDP model is put through a training process to generate a policy that cont
 This is done by having the model explore the entire state-action-observation space and optimising the policy to maximise its long-term cumulative reward.
 However, $\mathbf{b}$ is a vector of continuous probability distributions with infinite combinations, making POMDPs time-consuming or even impossible to solve exactly.
 We found this to be the case for our moderately-sized state space size and opted for an approximate method instead.
-We used the Point-Based Value Iteration (PBVI) algorithm~\cite{pineau2003point}, as implemented in the AI-Toolbox library\footnote{github.com/Svalorzen/AI-Toolbox}, to solve the POMDP model.
+We used the Point-Based Value Iteration (PBVI) algorithm~\cite{pineau2003point}, as implemented in the AI-Toolbox library\footnote{http://github.com/Svalorzen/AI-Toolbox}, to solve the POMDP model.
 The PBVI algorithm speeds up the training process by selecting a smaller subset of representative belief points from $\mathbf{b}$ and tracking these points only. 
 Using the PBVI algorithm, we generated a total of 15 policies, one for each target object. 
 
@@ -217,7 +217,7 @@ The objects in the guided experiment environment are $\mathbf{u}_{guided} = \{ d
 
 We recruited 10 participants (8 male, 2 female; average age 29.2 years) for the experiments, including 2 legally blind participants. 
 The other 8 participants were blindfolded to simulate blindness. 
-The app was run on an Asus ZenPhone AR with Android 7.0 and ARCore\footnote{developers.google.com/ar/} and text-to-speech enabled. 
+The app was run on an Asus ZenPhone AR with Android 7.0 and ARCore\footnote{http://developers.google.com/ar/} and text-to-speech enabled. 
 A time limit of 45 seconds was set for each experiment run, which was ended when the target object was found or the time limit was reached, and there was one experiment run per target in the respective environment.
 
 \subsection{Unguided Case}
@@ -317,6 +317,11 @@ However, the participants were able to find 8\% more objects on average in the u
 With these results, we can reasonably conclude that our system enables a blind or blindfolded user to find a target object and does so better than the alternative base case.
 
 The next steps for the project are to refine and expand the object detector to include objects from other environments. \tofix{that's it? a little bit more imagination... what about user- adaptation? different interface, maybe with different audio, voice, vibration etc.? evaluation with larger pool of VI participants? It doesn't mean you have to do it, but it gives ideas for future improvements and research projects.}
+
+\paragraph{{\bf Acknowledgements.}}\label{sec:acknowledge}
+This research is partly supported by a Google Faculty Research Award (Winter 2015).
+\tofix{any charity directly involved in the experiments?}
+
 
 \bibliographystyle{splncs04}
 \bibliography{bib}
