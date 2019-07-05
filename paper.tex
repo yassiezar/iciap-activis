@@ -251,10 +251,10 @@ A new run then started with the experiment staff selecting the (unknown) target 
 
 \subsection{Target Acquisition}
 
-The target acquisition rate (TAR) is the proportion of objects the participants found during an experiment. 
-For example, a TAR of 0.5 indicates that a participant found the target object in 50\% of searches. 
-Taking each participant's TAR as a datum, we found the unguided case produced a higher average TAR (0.54 vs. 0.46), meaning that participants found 8\% more objects without guidance instructions.
-However, the Kruskal-Wallis (KW) test for non-normal data shows that these results are statistically not significantly different ($p_{kw} = 0.16$), meaning we cannot conclude which experiment produced the best TAR. 
+As in~\cite{lock2019active}, we use the target acquisition rate (TAR) to compute the proportion of objects that the participants found during an experiment. 
+For example, a TAR of 0.5 indicates that a participant found the target object in 50\% of the searches. 
+Taking each participant's TAR as a datum, the unguided case produced a higher average TAR (0.54 vs. 0.46), meaning that the participants found 8\% more objects without guidance instructions.
+However, the Kruskal-Wallis (KW) test for non-normal data shows that statistically there is no significant difference between these results ($p_{kw} = 0.16$), meaning we cannot conclude which experiment produced the best TAR. 
 All the experiment results are summarised in Table~\ref{tab:results}. 
 
 \begin{table}
@@ -275,25 +275,25 @@ All the experiment results are summarised in Table~\ref{tab:results}.
 \subsection{Time to Target}
 
 The time it takes to find a target object is an important indicator of system performance, where less time indicates a shorter search time and increased performance.
-The data for the search times for each experiment are shown in Fig.~\ref{fig:boxplots}.
+The data for the search times in the guided and unguided experiments are shown in Fig.~\ref{fig:boxplots}.
+%
+It can be seen that the guidance system reduced the overall time to find each target object.
+This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p_{kw}=0.045$), an improvement of around 27\%.
+These results compare also favourably with those obtained in our previous version of the system~\cite{lock2019active}, where an average time-to-target of 31s was recorded. \tofix{Where did you get 31s? The VISAPP paper says 34s, although the average on table 2 of that paper is 32.3s. Which one is the right number?}
+However, it should be noted that the system implementation and experimental design in the current paper are significantly different from our previous work, so this comparison is interesting but not indicative of any major improvement.
+% \todo{How to relate the VISAPP work to these results? The experiments are different, so the data aren't directly comparable.}
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=1.0\textwidth]{figures/boxplot_combined.png}
-  \caption{A set of boxplots comparing the total linear and angular displacements, as well as the time to target for each experiment. }\label{fig:boxplots}
+  \caption{A set of boxplots comparing the total linear and angular displacements, as well as the time to target for each experiment. \tofix{can you swap ang-displacement and time-to-target plots?} }\label{fig:boxplots}
 \end{figure}
-
-From Fig.~\ref{fig:boxplots}, it can be seen that the guidance system reduced the overall time it took the participants to find each target object.
-This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p_{kw}=0.045$), an improvement of around 27\%.
-These results compare favourably with those collected from experiments performed with this system's previous iteration where an average time to target of 31s was recorded~\cite{lock2019active}. 
-However, it should be noted that the system implementation and experiment design for this work is significantly different and this comparison is symbolic more than it is indicative of major improvement.
-\todo{How to relate the VISAPP work to these results? The experiments are different, so the data aren't directly comparable.}
 
 \subsection{Movement}
 
-To give an indication of the effort required to find each target, we look at the mobile device's displacement data. 
+Finally, to give an indication of the effort required to find each target, we look at the mobile device's displacement data. 
 In this case, less device displacement is desirable, since it implies less physical exertion was demanded from the user.
-
+%
 The device displacement was measured in both linear ($x, y, z$) and angular (pan, tilt) dimensions.
 Integrating these data, we obtain the total absolute displacement in each dimension.
 These results are plotted in Fig.~\ref{fig:boxplots}.
@@ -304,21 +304,21 @@ These results are plotted in Fig.~\ref{fig:boxplots}.
   %\caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment.\tofix{Half the height of the image. You can also put it together with Fig.~4 to save space.}}\label{fig:boxplot-displacement}
 %\end{figure}
 
-The boxplots for the total angle displacement show a consistent reduction in radians for the guided case for both the pan (\SI{0.68}{\radian} vs. \SI{0.99}{\radian}, $p_{kw}=0.029$) and tilt dimensions (\SI{0.68}{\radian} vs. \SI{1.05}{\radian}, $p_{kw}=0.011$). 
-The guidance system therefore reduces the total angular displacement to find the objects by 31\% and 35\% for the pan and tilt dimensions respectively. 
+The boxplots for the total angular displacement show a consistent reduction in radians in the guided case for both the pan (\SI{0.68}{\radian} vs. \SI{0.99}{\radian}, $p_{kw}=0.029$) and tilt dimensions (\SI{0.68}{\radian} vs. \SI{1.05}{\radian}, $p_{kw}=0.011$). 
+The guidance system therefore reduces the total angular displacement to find the objects by 31\% and 35\% for the pan and tilt dimensions, respectively. 
 The total linear displacement is also reduced when using the guidance interface by approximately 36\% (\SI{0.23}{\metre} vs. \SI{0.36}{\metre}, $p_{kw}=0.012$).
 These results are summarised in Table~\ref{tab:results}.
 To conclude, the data show that the guidance interface reduced the total angular and linear displacement required to find the target objects in all dimensions by at least 31\%, reducing the total effort required by the user. 
 
-\todo{Make sure paper fits into 10+1 page limit for content and references}
+% \todo{Make sure paper fits into 10+1 page limit for content and references}
 
 \section{Conclusion}\label{sec:conclusion}
 
-In this work, we presented ActiVis, a mobile guidance system that uses an object detector to scan the environment for objects and a POMDP-based controller and audio interface to generate and present the user with guidance instructions. 
-We implemented this system on an Android app and tested it with a group of 10 participants to evaluate its effectiveness compared to a baseline, unguided case that only uses the object detector and relies on the human to generate the search path. 
-The key results from these experiments are that the guidance system improved the participants' target-searching performance, reducing the total search time and overall camera manipulation effort required when compared to a base case.
-However, the participants were able to find 8\% more objects on average in the unguided case, but this result was found to be statistically insignificant. 
-With these results, we can reasonably conclude that our system enables a blind or blindfolded user to find a target object and does so better than the alternative base case.
+In this work, we presented ActiVis, a mobile guidance system to scan the environment for finding objects, which uses a POMDP-based controller and a vision-based object detector, combined with an audio interface, to generate instructions for the user. 
+We implemented this system on an Android app and tested it with a group of 10 participants to evaluate its effectiveness compared to an unguided object detector. 
+The key results from these experiments are that the guidance system improved the participants' target-searching performance, reducing the total search time and overall camera manipulation effort required to find an object in an unknown environment.
+% However, the participants were able to find 8\% more objects on average in the unguided case, but this result was found to be statistically insignificant. 
+From these results, we can reasonably conclude that our new active search approach is potentially useful for similar mobile applications to help people with visual impairments.
 
 The next steps for the project are to refine and expand the object detector to include objects from other environments. \tofix{that's it? a little bit more imagination... what about user- adaptation? different interface, maybe with different audio, voice, vibration etc.? evaluation with larger pool of VI participants? It doesn't mean you have to do it, but it gives ideas for future improvements and research projects.}
 
