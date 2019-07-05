@@ -69,22 +69,22 @@ The paper is concluded in Section~\ref{sec:conclusion}.
 
 Early attempts to solve this guidance problem used markers encoded with object or environmental information and a smartphone that scans the environment for these simple patterns~\cite{gude2013blind,manduchi2012mobile}. 
 The device uses audio feedback to read out the embedded information or guide the user towards the markers. 
-Improvements to feature detectors have made it viable~\cite{redmon2016you} to replace markers with real objects, while an alternative guidance approach is proposed in~\cite{bigham2010vizwiz} which uses a Mechanical Turk worker to manually locate and give guidance instructions to the desired object within a user-provided picture. 
+While improvements to feature detectors have made it viable to replace markers with real objects~\cite{redmon2016you}, an alternative guidance approach is proposed in VizWiz~\cite{bigham2010vizwiz} which uses a Mechanical Turk worker to manually locate and guide towards the desired object within a user-provided picture. 
 
 The issue with a marker-based approach is that it requires significant effort to place and maintain them in an environment, which is remedied by markerless systems.
 However, both of these methods use passive guidance approaches that rely on the user placing the desired marker/object within the camera's view by themselves before any guidance is provided. 
 VizWiz~\cite{bigham2010vizwiz} can leverage a human's understanding of the environment to guide a user to the correct location, but there is significant lag and a reliance on a good internet connection and remote worker being available. 
-Previous work on the ActiVis system~\cite{lock2019active} addressed the passive guidance issue by implementing an MDP-based controller that gives the user pointing instructions to find an out-of-view object and showed that this is a viable method of object search. 
-However, that work moved to establish that an MDP-based controller is indeed a viable to generate guidance instructions and reduced variability by using encoded barcodes to simulate real objects and on-screen prompts to present the guidance instructions.
-In this work, we are expanding the control model and replacing the barcodes with real objects and providing audio guidance, thereby providing a complete object detection and guidance pipeline for people with vision impairments.  
+Previous work on the ActiVis system~\cite{lock2019active} addressed the passive guidance issue by implementing an MDP-based controller that gives the user pointing instructions to find an out-of-view object, showing that this is a viable method for object search. 
+However, that work used QR-codes to simulate real objects and on-screen prompts to present the guidance instructions.
+In this paper we expand the control model, replacing the QR-codes with real objects and providing audio guidance, thereby implementing a complete object detection and guidance pipeline for people with vision impairments.  
 
-Object detectors mainly come in 2 flavours: 2-stage models that use an external algorithm to select regions of interest to perform object inference on~\cite{ren2015faster}, and single-stage models that generate multiple, differently-sized windows and checks each window for any objects.
-Between the 2 types, there is a speed-accuracy trade-off, where 2-stage models typically produce more accurate results, but are slower and require more computing resources~\cite{liu2018deeplf}.
-On the other hand, single-stage models, such as SSD and MobileNet~\cite{liu2016ssd,howard2017mobilenet} produce less accurate results, but with drastically less parameters and FLOPS required to perform object inference than the 2-stage models. 
+Object detectors can be broadly classified in two-stage models, which use an external algorithm to select regions of interest where to perform object inference~\cite{ren2015faster}, and single-stage models, which generate multiple windows of different sizes and checks each window for any objects.
+Between these two classes, there is a speed-accuracy trade-off, where the two-stage models typically produce more accurate results, but are slower and require more computing resources~\cite{liu2018deeplf}.
+On the other hand, single-stage models, such as SSD and MobileNet~\cite{liu2016ssd,howard2017mobilenet}, produce less accurate results but require significantly less parameters and FLOPS to perform object inference than the two-stage models. 
 
 \section{Active Vision System}\label{sec:active-vision}
 
-A complete system diagram for Activis is given in Fig.~\ref{fig:sys-diagram}. 
+A complete system diagram for ActiVis is given in Fig.~\ref{fig:sys-diagram}. 
 This diagram shows a typical feedback control loop that generates a control signal to minimise some error signal, \emph{e}, and drive the output to some reference, $r$, but has been modified to incorporate a human within the loop.
 In this case, $r$ is the target object. 
 
