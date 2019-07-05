@@ -47,7 +47,7 @@ This paper expands upon concepts proposed in~\cite{bellotto2013,lock2017portable
 \begin{figure}
   \centering
   \includegraphics[width=0.45\textwidth]{figures/system_use.png} \hfil
-  \includegraphics[width=0.45\textwidth]{figures/system_use.png}
+  \includegraphics[width=0.45\textwidth]{figures/object_grid/grid.png}
   \caption{The system in use during an experiment with a blindfolded participant. \tofix{can you add another image with (most of) the objects? maybe arranged in a grid} }\label{fig:system-in-use}
 \end{figure}
 
@@ -129,9 +129,9 @@ The transition function for this case is $t(s, a, s') = t(\textrm{keyboard}, \te
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.45\columnwidth]{figures/desk_example.png} \hfil
-  \includegraphics[width=0.45\columnwidth]{figures/desk_example.png}
-  \caption{An example from of an image from the OpenImage dataset~\cite{openimages} containing typical office objects. \tofix{add one more image, different from VISAPP though}}\label{fig:openimage}
+  \includegraphics[width=0.35\columnwidth]{figures/desk_example.png} \hfil
+  \includegraphics[width=0.55\columnwidth]{figures/kitchen_example_thicc.png}
+  \caption{An example from of an image from the OpenImage dataset~\cite{openimages} containing typical office objects.}\label{fig:openimage}
 \end{figure}
 
 The reward function encourages the device controller to search for and find the target object by giving it a substantial reward for doing so, while penalising it for every action that does not result in it finding the target object.
@@ -275,8 +275,8 @@ The data for the search times for each experiment are shown in Fig.~\ref{fig:box
 
 \begin{figure}[t]
   \centering
-  \includegraphics[width=0.7\textwidth]{figures/boxplot_time_to_target.png}
-  \caption{A set of boxplots comparing the time to target for each experiment. }\label{fig:boxplot-time}
+  \includegraphics[width=1.0\textwidth]{figures/boxplot_combined.png}
+  \caption{A set of boxplots comparing the total linear and angular displacements, as well as the time to target for each experiment. }\label{fig:boxplot-time}
 \end{figure}
 
 From Fig.~\ref{fig:boxplot-time}, it can be seen that the guidance system reduced the overall time it took the participants to find each target object.
@@ -294,11 +294,11 @@ The device displacement was measured in both linear ($x, y, z$) and angular (pan
 Integrating these data, we obtain the total absolute displacement in each dimension.
 These results are plotted in Fig.~\ref{fig:boxplot-displacement}.
 
-\begin{figure}[t]
-  \centering
-  \includegraphics[width=0.8\textwidth]{figures/boxplot_displacement.png}
-  \caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment.\tofix{Half the height of the image. You can also put it together with Fig.~4 to save space.}}\label{fig:boxplot-displacement}
-\end{figure}
+%\begin{figure}[t]
+  %\centering
+  %\includegraphics[width=0.6\textwidth]{figures/boxplot_displacement.png}
+  %\caption{A set of boxplots comparing the linear and angular displacement the device travelled for each experiment.\tofix{Half the height of the image. You can also put it together with Fig.~4 to save space.}}\label{fig:boxplot-displacement}
+%\end{figure}
 
 The boxplots for the total angle displacement show a consistent reduction in radians for the guided case for both the pan (\SI{0.68}{\radian} vs. \SI{0.99}{\radian}, $p_{kw}=0.029$) and tilt dimensions (\SI{0.68}{\radian} vs. \SI{1.05}{\radian}, $p_{kw}=0.011$). 
 The guidance system therefore reduces the total angular displacement to find the objects by 31\% and 35\% for the pan and tilt dimensions respectively. 
