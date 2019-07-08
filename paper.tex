@@ -85,7 +85,7 @@ On the other hand, single-stage models, such as SSD and MobileNet~\cite{liu2016s
 \section{Active Vision System}\label{sec:active-vision}
 
 A complete system diagram for ActiVis is given in Fig.~\ref{fig:sys-diagram}. 
-This diagram shows a typical feedback control loop that generates a control signal to minimise some error signal, $e$, and drive the output to some reference, $r$. In our case, the system incorporates a human within the loop; $r$ is the target object and $y$ is the actual observation of the mobile phone's camera.
+This diagram shows a typical feedback control loop that generates a control signal to minimise some error signal, $e$, and drive the output to some reference, $r$. In our case, the system incorporates a human within the loop; $r$ is the target object and $y$ is the actual observation of the mobile device's camera.
 
 \begin{figure}[t]
   \centering
@@ -93,33 +93,33 @@ This diagram shows a typical feedback control loop that generates a control sign
   \caption{The system control loop including a human and the controller.}\label{fig:sys-diagram}
 \end{figure}
 
-Adding a human into the loop means to have an additional block, $H$, representing a human that receives a control signal, $u$, from the controller, $K$. 
-However, the challenge is that a person may interpret $u$ in some unpredictable way, resulting in the signal $u*$ that points the camera, $P$, to a new object observation,~$y$.
-It is therefore important to design $K$ to be robust enough to accommodate different user habits and limitations, ensuring that $u*$ tracks $u$ as closely as possible. 
-The object detector's classification errors, $n$, is added to the feedback loop as a noise signal that affects $K$'s output.
+Adding a human into the loop requires an additional block, $H$, representing a human that receives a control signal, $u$, from the controller, $K$. 
+However, the challenge is that a person may interpret $u$ in some unpredictable way, resulting in the signal $u^*$ that points the camera, $P$, to a new object observation,~$y$.
+It is therefore important to design $K$ to be robust enough to accommodate different user habits and limitations, to ensure that $u^*$ tracks $u$ as closely as possible. 
+The object detector's classification error, $n$, is added to the feedback loop as a noise signal that affects $K$'s output.
 
-In our previous work~\cite{lock2019active}, we assumed a perfect object classifier and solved the problem using an MDP.
-In this paper we remove that assumption and replace the MDP with a POMDP-based controller that can handle uncertainties in the object detection and classification. 
+In our previous work~\cite{lock2019active}, we assumed a perfect object classifier and solved the problem using an MDP.\
+In this paper we remove that assumption and replace the MDP with a POMDP-based controller that can handle uncertainties in the object detection and classification output. 
 Our new controller works by generating a trail of virtual waypoints for the user to point the camera towards, which eventually leads to the target object.
 The waypoint positions are based on the model's pre-trained internal knowledge of the inter-object spatial relationships and they are placed in a way that maximises the probability of the user finding the target object.
-The design and implementation of this controller are discussed next.
+%The design and implementation of this controller are discussed next.
 
 \subsection{Controller Design}
 
-A POMDP is an extension of the MDP that handles cases where the state is not directly observable, allowing it to be used in more realistic scenarios. 
-The implication of this is that a POMDP-based agent does not know its state at any point in time, but must infer it based on the known model parameters and sensor accuracy, which in our case is the object detector's accuracy.
+A POMDP is an extension to a MDP that handles cases where the state is not directly observable, allowing it to be used in more realistic scenarios. 
+The implication, however, is that a POMDP-based agent does not know its state at any point in time, but must infer it based on the known model parameters and sensor accuracy, which in our case is the object detector's accuracy.
 This state inference relies on a so-called {\em belief meta-state}, which is updated with additional observations to reflect the likelihood that the agent is in any given state.
-The belief state is fully observable by the agent and can be used to infer the mobile device's current state and generate the next action.
+The belief state is fully observable by the agent and is used to infer the mobile device's current state and generate the next action.
 
 A POMDP model is described by the 8-tuple $(\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \mathbf{b}, \gamma)$, where $\mathbf{S}$ represents a finite set of discrete states, $\mathbf{A}$ is a set of discrete actions, $\mathbf{T}$ is a matrix containing the probabilities of transitioning from state $s$ to state $s'$ (where $s, s' \in \mathbf{S}$) after executing action $a$ (where $a \in \mathbf{A}$), and $\mathbf{R}$ is the reward the agent receives for executing $a$ and reaching $s'$.
 $\mathbf{\Omega}$ is the set of possible state observations, while the matrix $\mathbf{O}$ contains the probabilities of making observation $o \in \mathbf{\Omega}$ when in $s$ after executing $a$.
-Finally, $\mathbf{b}$ is a belief vector containing the state probability distribution and $\gamma$ is a discount factor that prioritises long-term over short-term rewards, which affects the model's convergence rate. 
-The POMDP's parameters and training process are discussed next. 
+Finally, $\mathbf{b}$ is the belief vector containing the state probability distribution and $\gamma$ is a discount factor that prioritises long-term over short-term rewards, which affects the model's convergence rate. 
+%The POMDP's parameters and training process are discussed next. 
 
 \subsubsection{Parameters}
 
-The state is given by $s = \langle u, n, v \rangle$, where $u$ is the object within view, $n$ is the number of search steps taken during the search and $v$ is a binary variable indicating whether a waypoint has been visited or not.
-The possible actions that dictates the location where the mobile device will generate the next waypoint are given by $\mathbf{A} = \{ \textrm{UP, DOWN, LEFT, RIGHT} \}$.
+The state is given by $s = \langle u, n, v \rangle$, where $u$ is the object within view, $n$ is the number of search steps taken during the search and $v$ is a binary variable indicating whether a waypoint has been visited before.
+The possible actions that dictate the location where the mobile device will generate the next waypoint are given by $\mathbf{A} = \{ \textrm{UP, DOWN, LEFT, RIGHT} \}$.
 $\mathbf{T}$ was determined by extracting the inter-object spatial relationships for a limited number of objects, in terms of the actions $\mathbf{A}$, from the OpenImages~\cite{openimages} dataset. 
 For example, by iterating over the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 16\% of the images containing both objects (see Fig.~\ref{fig:openimage}). 
 The transition function for this case is $t(s, a, s') = t(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16$.
@@ -153,7 +153,7 @@ The penalty given for every waypoint generated that does not lead to the target 
 The state observations are identical to the states that the mobile device can enter into. 
 In this case, however, uncertainty is introduced into the observation by the object detector.
 Instead, the previous search locations and search time are fully observable, since they can be tracked by the mobile device.
-$\mathbf{\Omega}$ therefore only contains the classification/misclassification probabilities of the object detector.
+$\mathbf{O}$ therefore only contains the classification/misclassification probabilities of the object detector.
 These values were found by performing a set of classification tests with the object detector and generating a confusion matrix to populate $\mathbf{O}$.
 
 \subsubsection{Training}
@@ -180,7 +180,7 @@ Using the PBVI algorithm, we generated a total of 15 policies, one for each targ
 
 We implemented the object detector and the POMDP controller in an Android app and combined it with an audio interface that provides non-visual guidance instructions.
 We use non-intrusive bone-conducting headphones to transmit the audio signals to the user without blocking other ambient sounds.
-The app run in real-time on an Asus ZenPhone AR with Android 7.0 and ARCore\footnote{http://developers.google.com/ar/}.% and text-to-speech enabled. 
+The app runs in real-time on an Asus ZenPhone AR with Android 7.0 and ARCore\footnote{http://developers.google.com/ar/} enabled.
 
 \subsubsection{Audio Interface}
 To describe the waypoints' pan and tilt positions, we implemented an improved version of the interface described in~\cite{bellotto2013} that uses a spatialised audio signal.
@@ -202,12 +202,11 @@ Training for 120 epochs, with 1000 iterations each, we achieved a mAP of 0.16 on
 To search the target object, the system uses the policy file from the POMDP training process, which defines the best location of next waypoint based on the device's current state.
 This state is tracked by the device throughout the app's runtime by performing object detection and recording the previous search locations and waypoint positions.
 The latter are obtained by discretising the world into a $6\times6$ grid, where each cell represents a \SI{35}{\degree} rotation, and setting the relevant grid unit's $v$ value when visited.
-This setup gives the state access to perfectly observable $n$ and $v$ parameters, while the observation $o$ is generated by the object detector. 
+This setup gives the state access to perfectly observable $n$ and $v$ parameters, while the observation $u$ is generated by the object detector. 
 When the device makes a new observation, either because the user rotates the device past \SI{35}{\degree} or sees a new object, the device triggers the controller to generate a new waypoint location.
 The controller uses $o$ to update $\mathbf{b}$ and queries the policy for the best location to place the new waypoint. 
-The policy output is an action from $\mathbf{A}$ that indicates the next adjacent grid square to place the waypoint, e.g. an `UP' output would result in a waypoint being placed one grid square above the current view. 
-\tofix{double-check all the quantities an definitions in this section (i.e. states, observations, etc.) are correct, because some were a little mixed-up...}
-
+The policy output is an action from $\mathbf{A}$ that indicates the next adjacent grid square to place the waypoint, e.g.\ an `UP' output would result in a waypoint being placed one grid square above the current view. 
+%\tofix{double-check all the quantities an definitions in this section (i.e. states, observations, etc.) are correct, because some were a little mixed-up...}
 
 \section{Experiment Design}\label{sec:experiments}
 
@@ -221,7 +220,7 @@ In particular, the objects in the guided case experiment are $\mathbf{U}_{g} = \
 We recruited 10 participants (8 male, 2 female; average age 29.2 years) for the experiments, including 2 legally blind participants. 
 The other 8 participants were blindfolded. 
 A time limit of 45 seconds was set for each experiment run, which ended either by finding the target object or reaching the time limit.
-There was one experiment run per target in each respective environment, giving 8 experiment runs for each the guided and unguided cases. %\tofix{not clear here: how many object searches were done by each participant in the guided and unguided cases?}
+There was one experiment run per target in each respective environment, giving 8 experiment runs for each the of guided and unguided cases. %\tofix{not clear here: how many object searches were done by each participant in the guided and unguided cases?}
 
 \subsection{Unguided Case}
 
@@ -242,7 +241,7 @@ When the target object comes within the camera's view and is correctly detected,
 In this experiment, we evaluate the performance of the guidance system in an object search task, where the perception and control tasks are performed by the guidance system and the participant acts as the actuator, interpreting control signals and outputting actuation forces on the camera sensor (see Fig.~\ref{fig:sys-diagram}). 
 %
 To reduce the possibility of the participants ignoring the guidance instructions to find the target object by themselves, they were not told which objects they were actually looking for.
-This also helped to focus on the performance measurement of the guidance system only, isolating it from external factors such as user commonsense or other biases.
+This also helped to focus on the performance measurement of the guidance system only, isolating it from external factors such as user common-sense or other biases.
 A new run then started with the experiment staff selecting the (unknown) target object for the user.
 
 \section{Results}\label{sec:results}
