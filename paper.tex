@@ -48,7 +48,7 @@ This paper expands upon concepts proposed in~\cite{bellotto2013,lock2017portable
   \centering
   \includegraphics[height=4cm]{figures/system_use.png} \hfil
   \includegraphics[height=4cm]{figures/object_grid/grid.png}
-  \caption{The system in use during an experiment with a blindfolded participant. \tofix{can you add another image with (most of) the objects? maybe arranged in a grid} }\label{fig:system-in-use}
+  \caption{The system in use during an experiment with a blindfolded participant. }\label{fig:system-in-use}
 \end{figure}
 
 ActiVis uses the camera's current and previous image data as input and leverages its understanding of inter-object spatial relationships to determine the best navigation action to find the target object.
@@ -111,17 +111,15 @@ The implication of this is that a POMDP-based agent does not know its state at a
 This state inference relies on a so-called {\em belief meta-state}, which is updated with additional observations to reflect the likelihood that the agent is in any given state.
 The belief state is fully observable by the agent and can be used to infer the mobile device's current state and generate the next action.
 
-A POMDP model is described by the 8-tuple $(\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \mathbf{b}, \gamma)$, where $\mathbf{S}$ represents a finite set of discrete states, $\mathbf{A}$ is a set of discrete actions, $\mathbf{T}$ is a matrix containing the probabilities of transitioning from state $s$ to state $s'$ (where $s, s' \in \mathbf{S}$) after executing action $a$ (where $a \in \mathbf{A}$), and $\mathbf{R}$ is the reward the agent receives executing action $a$ and reaching state $s'$.
-$\mathbf{\Omega}$ is the set of possible state observations, while the matrix $\mathbf{O}$ contains the probabilities of making observation $o \in \mathbf{\Omega}$ when in state $s$ after executing action $a$. \tofix{sure about this? I think the observation is before the action...}
-Finally, $\mathbf{b}$ is the belief vector containing the state probability distribution and $\gamma$ is a discount factor that prioritises long-term over short-term rewards, which affects the model's convergence rate. 
+A POMDP model is described by the 8-tuple $(\mathbf{S}, \mathbf{A}, \mathbf{T}, \mathbf{R}, \mathbf{\Omega}, \mathbf{O}, \mathbf{b}, \gamma)$, where $\mathbf{S}$ represents a finite set of discrete states, $\mathbf{A}$ is a set of discrete actions, $\mathbf{T}$ is a matrix containing the probabilities of transitioning from state $s$ to state $s'$ (where $s, s' \in \mathbf{S}$) after executing action $a$ (where $a \in \mathbf{A}$), and $\mathbf{R}$ is the reward the agent receives for executing $a$ and reaching $s'$.
+$\mathbf{\Omega}$ is the set of possible state observations, while the matrix $\mathbf{O}$ contains the probabilities of making observation $o \in \mathbf{\Omega}$ when in $s$ after executing $a$.
+Finally, $\mathbf{b}$ is a belief vector containing the state probability distribution and $\gamma$ is a discount factor that prioritises long-term over short-term rewards, which affects the model's convergence rate. 
 The POMDP's parameters and training process are discussed next. 
 
 \subsubsection{Parameters}
 
 The state is given by $s = \langle u, n, v \rangle$, where $u$ is the object within view, $n$ is the number of search steps taken during the search and $v$ is a binary variable indicating whether a waypoint has been visited or not.
-
 The possible actions that dictates the location where the mobile device will generate the next waypoint are given by $\mathbf{A} = \{ \textrm{UP, DOWN, LEFT, RIGHT} \}$.
-
 $\mathbf{T}$ was determined by extracting the inter-object spatial relationships for a limited number of objects, in terms of the actions $\mathbf{A}$, from the OpenImages~\cite{openimages} dataset. 
 For example, by iterating over the images containing the objects of interest, we can see that the object `monitor' is located above (i.e. UP) the object `keyboard' in 16\% of the images containing both objects (see Fig.~\ref{fig:openimage}). 
 The transition function for this case is $t(s, a, s') = t(\textrm{keyboard}, \textrm{UP}, \textrm{monitor}) = 0.16$.
@@ -135,7 +133,8 @@ The transition function for this case is $t(s, a, s') = t(\textrm{keyboard}, \te
 
 The reward function encourages the device controller to search for the target object by giving a substantial reward if the object is found, while penalising the controller for every action that does not result in a successful object detection.
 Furthermore, additional penalties are given if the controller generates a waypoint in an area it has explored before $(v = \textrm{true}$) or when it exceeds some search-length threshold denoted by $n_{\max}$.
-The reward values were empirically determined starting from the implementation of our previous MDP model~\cite{lock2019active}, the rewards of which are summarised in Table~\ref{tab:rewards} together with the new ones. \tofix{can you explain why the last reward (otherwise) is much bigger than before, even bigger than the -75 rewards?}
+The reward values were empirically determined starting from the implementation of our previous MDP model~\cite{lock2019active}, the rewards of which are summarised in Table~\ref{tab:rewards} together with the new ones. %\tofix{can you explain why the last reward (otherwise) is much bigger than before, even bigger than the -75 rewards?}
+The penalty given for every waypoint generated that does not lead to the target was significantly increased for this model to offset the delay before large penalties are introduced and increase the model's urgency. 
 
 \begin{table}
   \centering
@@ -155,7 +154,7 @@ The state observations are identical to the states that the mobile device can en
 In this case, however, uncertainty is introduced into the observation by the object detector.
 Instead, the previous search locations and search time are fully observable, since they can be tracked by the mobile device.
 $\mathbf{\Omega}$ therefore only contains the classification/misclassification probabilities of the object detector.
-These values were found by performing a set of classification tests with the object detector and generating a confusion matrix to populate $\mathbf{\Omega}$. \tofix{you mean $\mathbf{O}$?}
+These values were found by performing a set of classification tests with the object detector and generating a confusion matrix to populate $\mathbf{O}$.
 
 \subsubsection{Training}
 
@@ -215,15 +214,14 @@ The policy output is an action from $\mathbf{A}$ that indicates the next adjacen
 To evaluate the guidance system's effectiveness, we designed a set of experiments to measure its performance in driving a user towards a target object within a static environment. 
 We conducted an additional set of experiments with an alternative system that relies on a user's intuition and prior knowledge to generate actions instead, to act as a baseline measurement for our system's results. 
 
-Both experiment environments and the object placements within them were modelled on a typical office and care was taken to ensure that both environments were unique in layout and object placement, though some cross-experiment occurrences appear with the larger, more static objects (e.g. door, desk). 
+Both experiment environments and the object placements within them were modelled on a typical office and care was taken to ensure that both environments were unique in layout and object placement, though some cross-experiment occurrences appear with the larger, more static objects (e.g.\ door, desk). 
 Also, to minimise any cross-experiment learning effects, two different sets of objects were used for each experiment. If any (medium-small) objects occurred in both experiments, they were placed at different positions. 
-In particular, the objects in the guided case experiment are $\mathbf{U}_{g} = \{ door$, $desk$, $chair$, $whiteboard$, $mouse$, $laptop$, $backpack$, $mug \}$, while the objects in the unguided case are $\mathbf{U}_{ng} = \{ door$, $desk$, $chair$, $whiteboard$, $mouse$, $monitor$, $telephone$, $keyboard \}$.
+In particular, the objects in the guided case experiment are $\mathbf{U}_{g} = \{ door$, $desk$, $chair$, $whiteboard$, $mouse$, $laptop$, $backpack$, $mug \}$, while the objects in the unguided case are $\mathbf{U}_{ug} = \{ door$, $desk$, $chair$, $whiteboard$, $mouse$, $monitor$, $telephone$, $keyboard \}$.
 
 We recruited 10 participants (8 male, 2 female; average age 29.2 years) for the experiments, including 2 legally blind participants. 
 The other 8 participants were blindfolded. 
 A time limit of 45 seconds was set for each experiment run, which ended either by finding the target object or reaching the time limit.
-There was one experiment run per target in the respective environment. \tofix{not clear here: how many object searches were done by each participant in the guided and unguided cases?}
-
+There was one experiment run per target in each respective environment, giving 8 experiment runs for each the guided and unguided cases. %\tofix{not clear here: how many object searches were done by each participant in the guided and unguided cases?}
 
 \subsection{Unguided Case}
 
@@ -234,7 +232,7 @@ There was one experiment run per target in the respective environment. \tofix{no
 For this experiment, the mobile camera and object detector acts as the participants' eyes and informs them about the objects within the camera's view.
 It is then up to the participant to exploit their prior knowledge and intuition to manipulate the camera and find the target object. 
 In this case, the human acts as both the controller and the actuator. 
-Similarly to other commercially available applications \tofix{add references to VizWiz, seeingAI, taptapsee}, the unguided version of our app only reads out the objects upon the user's request by tapping on the screen. 
+Similar to other commercially available applications, such as SeeingAI\footnote{apps.apple.com/us/app/seeing-ai/id999062298} and TapTapSee\footnote{play.google.com/store/apps/details?id=com.msearcher.taptapsee.android}, the unguided version of our app only reads out the objects upon the user's request by tapping on the screen. 
 When the target object comes within the camera's view and is correctly detected, the device vibrates to inform the participant. 
 
 % To mimic the normal search behaviour and allow the participant's to use their intuition and prior knowledge, we ignored the learning effect for this experiment and verbally informed them what their target was for each experiment run.
@@ -254,7 +252,7 @@ A new run then started with the experiment staff selecting the (unknown) target 
 As in~\cite{lock2019active}, we use the target acquisition rate (TAR) to compute the proportion of objects that the participants found during an experiment. 
 For example, a TAR of 0.5 indicates that a participant found the target object in 50\% of the searches. 
 Taking each participant's TAR as a datum, the unguided case produced a higher average TAR (0.54 vs. 0.46), meaning that the participants found 8\% more objects without guidance instructions.
-However, the Kruskal-Wallis (KW) test for non-normal data shows that statistically there is no significant difference between these results ($p_{kw} = 0.16$), meaning we cannot conclude which experiment produced the best TAR. 
+However, the Kruskal-Wallis (KW) test for non-normal data shows that statistically there is no significant difference between these results ($p_{kw} = 0.16$), meaning we cannot conclude which experiment produced the best TAR.\
 All the experiment results are summarised in Table~\ref{tab:results}. 
 
 \begin{table}
@@ -279,14 +277,14 @@ The data for the search times in the guided and unguided experiments are shown i
 %
 It can be seen that the guidance system reduced the overall time to find each target object.
 This is confirmed by the data that show an average search time of 12.5s for the guided experiment and 17.2s for the unguided case ($p_{kw}=0.045$), an improvement of around 27\%.
-These results compare also favourably with those obtained in our previous version of the system~\cite{lock2019active}, where an average time-to-target of 31s was recorded. \tofix{Where did you get 31s? The VISAPP paper says 34s, although the average on table 2 of that paper is 32.3s. Which one is the right number?}
+These results compare also favourably with those obtained in our previous version of the system~\cite{lock2019active}, where an average time-to-target of 34s was recorded.%\tofix{Where did you get 31s? The VISAPP paper says 34s, although the average on table 2 of that paper is 32.3s. Which one is the right number?}
 However, it should be noted that the system implementation and experimental design in the current paper are significantly different from our previous work, so this comparison is interesting but not indicative of any major improvement.
 % \todo{How to relate the VISAPP work to these results? The experiments are different, so the data aren't directly comparable.}
 
 \begin{figure}[t]
   \centering
   \includegraphics[width=1.0\textwidth]{figures/boxplot_combined.png}
-  \caption{A set of boxplots comparing the total linear and angular displacements, as well as the time to target for each experiment. \tofix{can you swap ang-displacement and time-to-target plots?} }\label{fig:boxplots}
+  \caption{A set of boxplots comparing the total linear and angular displacements, as well as the time to target for each experiment.}\label{fig:boxplots}
 \end{figure}
 
 \subsection{Movement}
@@ -320,13 +318,20 @@ The key results from these experiments are that the guidance system improved the
 % However, the participants were able to find 8\% more objects on average in the unguided case, but this result was found to be statistically insignificant. 
 From these results, we can reasonably conclude that our new active search approach is potentially useful for similar mobile applications to help people with visual impairments.
 
-The next steps for the project are to refine and expand the object detector to include objects from other environments. \tofix{that's it? a little bit more imagination... what about user- adaptation? different interface, maybe with different audio, voice, vibration etc.? evaluation with larger pool of VI participants? It doesn't mean you have to do it, but it gives ideas for future improvements and research projects.}
+The system can benefit from future work that focuses on improving the flexibility and usability of the system. 
+Using a dataset specifically designed for active vision tasks that include the absolute positions of objects as well as the camera in a diverse set of real scenes, will make it possible to extend the POMDP model into 3 dimensions and use more accurate transition and observation functions.
+The University of North Carolina's Active Vision Dataset\cite{active2017dataset} has a limited set of object and scene classes, but is a step in the right direction.
+The usability of the system can potentially be improved by replacing the simple sine-wave tone with a richer and more pleasant tone, such as musical instruments, and allow for the parameters that control the interface's behaviour adapt to the user over time.  
+%Furthermore, such a dataset will make it possible to replace the relational transition and observation functions used in this work, with more realistic ones that will allow a wider set of actions to be used.
+
+%The next steps for the project are to refine and expand the object detector to include objects from other environments. \tofix{that's it? a little bit more imagination... what about user- adaptation? different interface, maybe with different audio, voice, vibration etc.? evaluation with larger pool of VI participants? It doesn't mean you have to do it, but it gives ideas for future improvements and research projects.}
 
 \paragraph{{\bf Acknowledgements.}}\label{sec:acknowledge}
 This research is partly supported by a Google Faculty Research Award (Winter 2015).
-\tofix{any charity directly involved in the experiments?}
+We would like to thank the Voluntary Centre Services UK for their help in facilitating the experiments with people with limited vision. 
+%\tofix{any charity directly involved in the experiments?}
 
-\tofix{check all references to use correct information and full list of authors (suggest to use manual input on tools like JabRef)}
+%\tofix{check all references to use correct information and full list of authors (suggest to use manual input on tools like JabRef)}
 \bibliographystyle{splncs04}
 \bibliography{bib}
 
