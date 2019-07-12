@@ -136,7 +136,7 @@ Furthermore, additional penalties are given if the controller generates a waypoi
 The reward values were empirically determined starting from the implementation of our previous MDP model~\cite{lock2019active}, the rewards of which are summarised in Table~\ref{tab:rewards} together with the new ones. %\tofix{can you explain why the last reward (otherwise) is much bigger than before, even bigger than the -75 rewards?}
 The penalty given for every waypoint generated that does not lead to the target was significantly increased for this model to offset the delay before large penalties are introduced and increase the model's urgency. 
 
-\begin{table}
+\begin{table}[t]
   \centering
   \caption{The reward function for the POMDP. }\label{tab:rewards}
   \begin{tabular}{p{3cm}p{2cm}p{2cm}}
@@ -231,7 +231,7 @@ There was one experiment run per target in each respective environment, giving 8
 For this experiment, the mobile camera and object detector acts as the participants' eyes and informs them about the objects within the camera's view.
 It is then up to the participant to exploit their prior knowledge and intuition to manipulate the camera and find the target object. 
 In this case, the human acts as both the controller and the actuator. 
-Similar to other commercially available applications, such as SeeingAI\footnote{apps.apple.com/us/app/seeing-ai/id999062298} and TapTapSee\footnote{play.google.com/store/apps/details?id=com.msearcher.taptapsee.android}, the unguided version of our app only reads out the objects upon the user's request by tapping on the screen. 
+Similar to other commercially available applications, such as SeeingAI\footnote{http://www.microsoft.com/en-us/ai/seeing-ai} and TapTapSee\footnote{http://taptapseeapp.com}, the unguided version of our app only reads out the objects upon the user's request by tapping on the screen. 
 When the target object comes within the camera's view and is correctly detected, the device vibrates to inform the participant. 
 
 % To mimic the normal search behaviour and allow the participant's to use their intuition and prior knowledge, we ignored the learning effect for this experiment and verbally informed them what their target was for each experiment run.
@@ -318,15 +318,14 @@ The key results from these experiments are that the guidance system improved the
 From these results, we can reasonably conclude that our new active search approach is potentially useful for similar mobile applications to help people with visual impairments.
 
 The system can benefit from future work that focuses on improving the flexibility and usability of the system. 
-Using a dataset specifically designed for active vision tasks that include the absolute positions of objects as well as the camera in a diverse set of real scenes, will make it possible to extend the POMDP model into 3 dimensions and use more accurate transition and observation functions.
-The University of North Carolina's Active Vision Dataset\cite{active2017dataset} has a limited set of object and scene classes, but is a step in the right direction.
-The usability of the system can potentially be improved by replacing the simple sine-wave tone with a richer and more pleasant tone, such as musical instruments, and allow for the parameters that control the interface's behaviour adapt to the user over time.  
+New datasets that includes the 3D position of objects and camera, similar to what has been done in robotics~\cite{active2017dataset} but with a more diverse set of real scenes, would make it possible to extend our solution training more accurate transition and observation models that can cope with depth.
+The usability of the system can potentially be improved by more sophisticated audio interfaces and creating adaptive control algorithms that change the interface's behaviour based on the user performance over time~\cite{gallina2015}.  
 %Furthermore, such a dataset will make it possible to replace the relational transition and observation functions used in this work, with more realistic ones that will allow a wider set of actions to be used.
 
 %The next steps for the project are to refine and expand the object detector to include objects from other environments. \tofix{that's it? a little bit more imagination... what about user- adaptation? different interface, maybe with different audio, voice, vibration etc.? evaluation with larger pool of VI participants? It doesn't mean you have to do it, but it gives ideas for future improvements and research projects.}
 
 \paragraph{{\bf Acknowledgements.}}\label{sec:acknowledge}
-This research is partly supported by a Google Faculty Research Award (Winter 2015).
+This research is partly supported by a Google Faculty Research Award.
 We would like to thank the Voluntary Centre Services UK for their help in facilitating the experiments with people with limited vision. 
 %\tofix{any charity directly involved in the experiments?}
 
